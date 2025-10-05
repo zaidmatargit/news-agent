@@ -4,6 +4,7 @@ import feedparser
 from datetime import datetime, timedelta
 from collections import defaultdict
 
+<<<<<<< HEAD
 def fetch_rss_feed(url, source_name):
     """Fetch and parse RSS feed"""
     try:
@@ -76,6 +77,10 @@ def fetch_product_hunt():
     if not api_key:
         print("Product Hunt API key not set, skipping...")
         return []
+=======
+def generate_news_summary():
+    """Generate daily news summary using Claude API - Cost-optimized version"""
+>>>>>>> 1ddef5e6978ca6620f5d98abd9c7ce7a37f3f227
     
     try:
         # Product Hunt GraphQL API
@@ -219,8 +224,13 @@ def generate_summary_with_perplexity(categorized_items):
     if not perplexity_api_key:
         raise ValueError("PERPLEXITY_API_KEY not set")
     
+<<<<<<< HEAD
+=======
+    # Get current date info
+>>>>>>> 1ddef5e6978ca6620f5d98abd9c7ce7a37f3f227
     current_date = datetime.now().strftime("%B %d, %Y")
     
+<<<<<<< HEAD
     # Build context from collected items
     context = "Here are news items collected from various sources:\n\n"
     
@@ -318,10 +328,77 @@ OUTPUT: Only the complete HTML file, starting with <!DOCTYPE html>"""
 def main():
     """Main execution"""
     print("Starting multi-source news aggregation...")
+=======
+    # OPTIMIZED PROMPT - Much shorter to reduce costs
+    prompt = f"""Create a tech news summary for {current_date}.
+
+CRITICAL REQUIREMENTS:
+1. Search for news from PAST 24 HOURS ONLY (since {yesterday})
+2. Include working article URLs for EVERY story
+3. Output ONLY the final HTML - no thinking process, no markdown blocks
+4. Start with <!DOCTYPE html> and end with </html>
+
+SEARCH STRATEGY:
+- Use date filters: "past 24 hours", "{current_date}", "today"
+- Use web_fetch to get article URLs
+- Find 10-15 top stories from past 24 hours
+
+TOPICS TO COVER (Pick top stories from these):
+1. AI Models & Tools (OpenAI, Anthropic, Claude, GPT, Cursor, etc.)
+2. Development (Next.js, React, VS Code, GitHub)
+3. Cloud & DevOps (AWS, Azure, Google Cloud)
+4. Microsoft Ecosystem (Copilot, Microsoft 365, Azure AI)
+5. Startups & Funding
+6. SaaS & Product Launches
+7. Cybersecurity
+8. Developer Tools & Productivity
+9. Low-Code/No-Code Platforms
+10. Emerging Tech (AI safety, Edge computing, Web3)
+
+HTML STRUCTURE:
+- Hero section with title: "Tech News Digest - {current_date}"
+- Executive Summary (2-3 sentences, key themes)
+- 10-15 Story Cards with:
+  * Category badge
+  * Headline
+  * 2-3 paragraphs
+  * "Why It Matters" (2 sentences)
+  * Key Takeaways (3 bullets)
+  * Sources: <a href="URL" target="_blank">Source Name</a>
+- Quick Hits (8-10 brief items)
+- Action Items section
+- Footer with timestamp
+
+DESIGN:
+- Dark mode (#0f172a background, #e5e7eb text)
+- Gradient header (blue to purple)
+- Category colors: AI=blue, Dev=purple, Business=green, Microsoft=orange
+- Card-based layout, hover effects
+- Mobile responsive
+
+OUTPUT FORMAT:
+Your entire response must be the HTML file only. No explanations, no thinking process, no code blocks.
+Start immediately with: <!DOCTYPE html>
+"""
+    
+    print(f"Generating cost-optimized news summary for {current_date}...")
+    print("Searching for news from the past 24 hours...")
+    
+    # Create message with reduced tokens for cost savings
+    message = client.messages.create(
+        model="claude-sonnet-4-20250514",
+        max_tokens=6000,  # Reduced from 16000 to cut costs by ~60%
+        messages=[{
+            "role": "user",
+            "content": prompt
+        }]
+    )
+>>>>>>> 1ddef5e6978ca6620f5d98abd9c7ce7a37f3f227
     
     # Step 1: Collect from all sources
     all_items = aggregate_all_sources()
     
+<<<<<<< HEAD
     # Step 2: Categorize
     categorized = categorize_items(all_items)
     
@@ -334,6 +411,19 @@ def main():
     html_content = generate_summary_with_perplexity(categorized)
     
     # Step 4: Save
+=======
+    # Clean up any markdown code blocks if present
+    if "```html" in html_content:
+        html_content = html_content.split("```html")[1].split("```")[0].strip()
+    elif "```" in html_content:
+        html_content = html_content.split("```")[1].split("```")[0].strip()
+    
+    # Remove any leading explanation text before <!DOCTYPE
+    if "<!DOCTYPE" in html_content:
+        html_content = "<!DOCTYPE" + html_content.split("<!DOCTYPE")[1]
+    
+    # Generate filename with timestamp
+>>>>>>> 1ddef5e6978ca6620f5d98abd9c7ce7a37f3f227
     timestamp = datetime.now().strftime("%Y-%m-%d")
     filename = f"output/news-summary-{timestamp}.html"
     
@@ -343,8 +433,16 @@ def main():
     with open("output/latest.html", 'w', encoding='utf-8') as f:
         f.write(html_content)
     
+<<<<<<< HEAD
     print(f"\nSuccess! Generated {filename}")
     print("Cost estimate: $0.02-0.08 (more sources = slightly higher)")
+=======
+    print(f"✅ Latest summary updated: {latest_file}")
+    print(f"📰 Summary includes news from the past 24 hours ({yesterday} to {current_date})")
+    print(f"💰 Cost-optimized version - should be ~60% cheaper than original")
+    
+    return filename
+>>>>>>> 1ddef5e6978ca6620f5d98abd9c7ce7a37f3f227
 
 if __name__ == "__main__":
     main()
