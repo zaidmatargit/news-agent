@@ -1,434 +1,1060 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tech News Digest — October 05, 2025</title>
-  <style>
-    :root {
-      --bg: #0a0a0a;
-      --card-bg: #1a1a1a;
-      --text: #e0e0e0;
-      --accent: #6e45e2;
-      --accent-light: #8a6eff;
-      --link: #7aa2f7;
-      --border: #333;
-    }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      line-height: 1.6;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 2rem 1rem;
-    }
-    header {
-      background: linear-gradient(135deg, var(--accent), var(--accent-light));
-      color: white;
-      padding: 2rem 1rem;
-      text-align: center;
-      border-radius: 0 0 20px 20px;
-      margin-bottom: 2rem;
-      box-shadow: 0 4px 20px rgba(110, 69, 226, 0.3);
-    }
-    h1 {
-      margin: 0;
-      font-size: 2.5rem;
-    }
-    h2 {
-      color: var(--accent-light);
-      margin-top: 2.5rem;
-      border-bottom: 2px solid var(--accent);
-      padding-bottom: 0.5rem;
-    }
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.5rem;
-      margin-top: 1.5rem;
-    }
-    .card {
-      background: var(--card-bg);
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      transition: transform 0.2s;
-    }
-    .card:hover {
-      transform: translateY(-5px);
-    }
-    .card h3 {
-      margin-top: 0;
-      color: var(--accent-light);
-    }
-    .card a {
-      color: var(--link);
-      text-decoration: none;
-    }
-    .card a:hover {
-      text-decoration: underline;
-    }
-    .takeaways {
-      background: rgba(110, 69, 226, 0.1);
-      border-left: 4px solid var(--accent);
-      padding: 0.8rem 1rem;
-      margin: 1rem 0;
-      border-radius: 0 8px 8px 0;
-    }
-    .takeaways strong {
-      color: var(--accent-light);
-    }
-    .repo-stars {
-      color: #f1c40f;
-      font-weight: bold;
-    }
-    footer {
-      text-align: center;
-      margin-top: 3rem;
-      padding: 1rem;
-      color: #888;
-      font-size: 0.9rem;
-    }
-    @media (max-width: 768px) {
-      .card-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech News Daily - Interactive Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --border: #334155;
+            --text-primary: #e5e7eb;
+            --text-secondary: #94a3b8;
+            --accent: #60a5fa;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: var(--primary-gradient);
+            padding: 40px 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .header .date {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+        }
+
+        .header .back-link {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            text-decoration: none;
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .header .back-link:hover {
+            transform: translateY(-50%) scale(1.2);
+        }
+
+        /* Controls */
+        .controls {
+            background: var(--bg-card);
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 120px;
+            z-index: 99;
+        }
+
+        .controls-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .search-box input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .category-filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .story-count {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-left: auto;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .category-section {
+            margin-bottom: 60px;
+        }
+
+        .category-section.hidden {
+            display: none;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .category-icon {
+            font-size: 2rem;
+        }
+
+        .category-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .category-count {
+            margin-left: auto;
+            background: var(--bg-card);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Story Grid */
+        .story-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .story-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .story-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .story-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            border-color: var(--accent);
+        }
+
+        .story-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .story-card.hidden {
+            display: none;
+        }
+
+        .story-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .story-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+            transition: color 0.3s ease;
+        }
+
+        .story-link:hover {
+            color: #93c5fd;
+            text-decoration: underline;
+        }
+
+        .story-content {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .why-matters {
+            background: rgba(96, 165, 250, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 3px solid var(--accent);
+        }
+
+        .why-matters h4 {
+            color: var(--accent);
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .why-matters p {
+            font-style: italic;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .takeaways {
+            margin-top: 15px;
+        }
+
+        .takeaways h4 {
+            color: #a78bfa;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .takeaways ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .takeaways li {
+            padding: 5px 0 5px 20px;
+            position: relative;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .takeaways li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #a78bfa;
+            font-weight: bold;
+        }
+
+        /* No Results */
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .no-results.hidden {
+            display: none;
+        }
+
+        .no-results h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .header .back-link {
+                position: static;
+                transform: none;
+                display: block;
+                margin-bottom: 15px;
+            }
+
+            .controls-inner {
+                flex-direction: column;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .story-count {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .story-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .category-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .category-count {
+                margin-left: 0;
+            }
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .loading.hidden {
+            display: none;
+        }
+    </style>
 </head>
 <body>
-  <header>
+    <header class="header">
+        <a href="../index.html" class="back-link">←</a>
+        <h1>Tech News Daily</h1>
+        <p class="date" id="news-date">Loading...</p>
+    </header>
+
+    <div class="controls">
+        <div class="controls-inner">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Search stories...">
+            </div>
+            <div class="category-filters">
+                <button class="filter-btn active" data-category="all">All</button>
+                <button class="filter-btn" data-category="ai">🤖 AI</button>
+                <button class="filter-btn" data-category="products">🚀 Products</button>
+                <button class="filter-btn" data-category="github">⭐ GitHub</button>
+                <button class="filter-btn" data-category="dev">🔨 Dev Tools</button>
+                <button class="filter-btn" data-category="news">📰 News</button>
+            </div>
+            <div class="story-count" id="story-count">20 stories</div>
+        </div>
+    </div>
+
     <div class="container">
-      <h1>Tech News Digest</h1>
-      <p>October 05, 2025 — Your daily snapshot of the tech world</p>
+        <div class="loading" id="loading">
+            <h3>Loading news...</h3>
+        </div>
+
+        <div class="no-results hidden" id="no-results">
+            <h3>No stories found</h3>
+            <p>Try a different search term or filter</p>
+        </div>
+
+        <!-- AI Company Updates -->
+        <section class="category-section" id="category-ai" data-category="ai">
+            <div class="category-header">
+                <span class="category-icon">🤖</span>
+                <h2 class="category-title">AI Company Updates</h2>
+                <span class="category-count" data-count="ai">5 stories</span>
+            </div>
+            <div class="story-grid" id="ai-stories">
+
+    <div class="story-card">
+        <h3 class="story-title"></h3>
+        <a href="https://techcrunch.com/2025/10/05/californias-new-ai-safety-law-shows-regulation-and-innovation-dont-have-to-clash/" class="story-link" target="_blank" rel="noopener">California’s New AI Safety Law Sets a National Precedent</a><br>
+        <div class="story-content">
+            
+        </div>
+        
+        <div class="why-matters">
+            <h4>Why It Matters</h4>
+            <p>Why It Matters</p>
+        </div>
+        
+        
+        <div class="takeaways">
+            <h4>Key Takeaways</h4>
+            <ul>
+                <li>California’s approach may become a template for other states and possibly federal regulation.</li>
+<li>AI companies face new compliance and transparency obligations, especially regarding safety and privacy.</li>
+<li>The law’s softer penalties raise questions about enforcement and corporate accountability.</li>
+            </ul>
+        </div>
+        
     </div>
-  </header>
+    
 
-  <div class="container">
-    <h2>AI Company Updates</h2>
-    <div class="card-grid">
-      <div class="card">
-        <h3>Sam Altman Says Sora Will Add ‘Granular,’ Opt-In Copyright Controls</h3>
-        <p>OpenAI CEO Sam Altman announced that Sora, the company’s advanced video generation model, will soon introduce granular, opt-in copyright controls. This move is aimed at giving creators more say over how their content is used in AI-generated videos, addressing growing concerns about copyright in generative AI.</p>
-        <p>Why It Matters: As AI-generated content becomes more prevalent, balancing innovation with intellectual property rights is critical. OpenAI’s proactive stance could set a precedent for the industry, encouraging other AI firms to adopt similar measures and potentially reducing legal risks for users.</p>
-        <div class="takeaways">
-          <strong>Key Takeaways:</strong>
-          <ul>
-            <li>Sora will offer detailed, user-controlled copyright settings.</li>
-            <li>OpenAI is responding to creator and industry concerns about AI and IP.</li>
-            <li>This could influence broader industry standards for AI content generation.</li>
-          </ul>
+    <div class="story-card">
+        <h3 class="story-title"></h3>
+        <a href="https://techcrunch.com/2025/10/04/sam-altman-says-sora-will-add-granular-opt-in-copyright-controls/" class="story-link" target="_blank" rel="noopener">OpenAI’s Sora to Add Granular, Opt-In Copyright Controls</a><br>
+        <div class="story-content">
+            
         </div>
-        <a href="https://techcrunch.com/2025/10/04/sam-altman-says-sora-will-add-granular-opt-in-copyright-controls/" target="_blank">Read more on TechCrunch</a>
-      </div>
+        
+        <div class="why-matters">
+            <h4>Why It Matters</h4>
+            <p>Why It Matters</p>
+        </div>
+        
+        
+        <div class="takeaways">
+            <h4>Key Takeaways</h4>
+            <ul>
+                <li>OpenAI is responding to mounting legal and ethical scrutiny over AI and copyright.</li>
+<li>Granular controls could set a new industry standard for AI content platforms.</li>
+<li>Creator trust and adoption may hinge on transparent copyright management.</li>
+            </ul>
+        </div>
+        
+    </div>
+    
 
-      <div class="card">
-        <h3>What to Expect at OpenAI’s DevDay 2025, and How to Watch It</h3>
-        <p>OpenAI’s annual developer conference, DevDay 2025, is just around the corner. The event is expected to showcase new tools, APIs, and possibly next-generation models, with a focus on empowering developers to build with OpenAI’s technology. The conference will be streamed live, with sessions tailored for both technical and non-technical audiences.</p>
-        <p>Why It Matters: DevDay has become a key event for the AI community, often revealing the direction of OpenAI’s platform and partnerships. This year’s announcements could further cement OpenAI’s position as a leader in AI infrastructure and set the agenda for the next wave of AI applications.</p>
-        <div class="takeaways">
-          <strong>Key Takeaways:</strong>
-          <ul>
-            <li>OpenAI DevDay 2025 will highlight new developer tools and APIs.</li>
-            <li>The event is a bellwether for the company’s strategic direction.</li>
-            <li>Live streaming ensures global access for developers and enthusiasts.</li>
-          </ul>
+    <div class="story-card">
+        <h3 class="story-title"></h3>
+        <a href="https://techcrunch.com/2025/10/03/what-to-expect-at-openais-devday-2025-and-how-to-watch-it/" class="story-link" target="_blank" rel="noopener">What to Expect at OpenAI’s DevDay 2025</a><br>
+        <div class="story-content">
+            
         </div>
-        <a href="https://techcrunch.com/2025/10/03/what-to-expect-at-openais-devday-2025-and-how-to-watch-it/" target="_blank">Read more on TechCrunch</a>
-      </div>
+        
+        <div class="why-matters">
+            <h4>Why It Matters</h4>
+            <p>Why It Matters</p>
+        </div>
+        
+        
+        <div class="takeaways">
+            <h4>Key Takeaways</h4>
+            <ul>
+                <li>OpenAI’s DevDay often sets the tone for the next wave of AI innovation.</li>
+<li>Developers can anticipate new capabilities and improved integration options.</li>
+<li>Industry adoption of AI hinges on accessible, robust developer tools.</li>
+            </ul>
+        </div>
+        
+    </div>
+    
 
-      <div class="card">
-        <h3>OpenAI and Jony Ive May Be Struggling to Figure Out Their AI Device</h3>
-        <p>Reports suggest that OpenAI’s collaboration with famed designer Jony Ive to create a consumer AI device is facing challenges. While details are scarce, insiders indicate that defining the product’s purpose and differentiating it in a crowded market are proving difficult.</p>
-        <p>Why It Matters: A hardware play from OpenAI, especially with Ive’s design pedigree, could redefine how consumers interact with AI. However, the difficulties highlight the complexities of moving from software to hardware and the risks of entering a competitive, fast-evolving space.</p>
-        <div class="takeaways">
-          <strong>Key Takeaways:</strong>
-          <ul>
-            <li>OpenAI and Jony Ive’s AI device project is encountering conceptual hurdles.</li>
-            <li>The partnership underscores the growing intersection of AI and hardware design.</li>
-            <li>Success could disrupt consumer tech, but the path is uncertain.</li>
-          </ul>
+    <div class="story-card">
+        <h3 class="story-title"></h3>
+        <a href="https://techcrunch.com/2025/10/03/with-its-latest-acqui-hire-openai-is-doubling-down-on-personalized-consumer-ai/" class="story-link" target="_blank" rel="noopener">OpenAI Doubles Down on Personalized Consumer AI with Latest Acqui-Hire</a><br>
+        <div class="story-content">
+            
         </div>
-        <a href="https://techcrunch.com/2025/10/05/openai-and-jony-ive-may-be-struggling-to-figure-out-their-ai-device/" target="_blank">Read more on TechCrunch</a>
-      </div>
+        
+        <div class="why-matters">
+            <h4>Why It Matters</h4>
+            <p>Why It Matters</p>
+        </div>
+        
+        
+        <div class="takeaways">
+            <h4>Key Takeaways</h4>
+            <ul>
+                <li>Personalization is becoming a key differentiator in consumer AI.</li>
+<li>OpenAI’s talent acquisitions reflect a focus on rapid product iteration.</li>
+<li>Consumer trust and engagement may increase with more tailored AI experiences.</li>
+            </ul>
+        </div>
+        
+    </div>
+    
 
-      <div class="card">
-        <h3>With Its Latest Acqui-Hire, OpenAI Is Doubling Down on Personalized Consumer AI</h3>
-        <p>OpenAI has made another strategic acqui-hire, bringing on a team focused on personalized consumer AI experiences. This follows a pattern of targeted acquisitions to accelerate development in high-priority areas, suggesting a stronger push into consumer-facing products.</p>
-        <p>Why It Matters: Personalized AI is a major battleground for tech giants. By acquiring specialized talent, OpenAI aims to stay ahead in creating AI that adapts to individual user needs, potentially leading to more intuitive and engaging consumer applications.</p>
-        <div class="takeaways">
-          <strong>Key Takeaways:</strong>
-          <ul>
-            <li>OpenAI’s latest acqui-hire targets personalized consumer AI.</li>
-            <li>The move signals a deeper investment in user-centric AI products.</li>
-            <li>Expect more tailored AI experiences from OpenAI in the near future.</li>
-          </ul>
+    <div class="story-card">
+        <h3 class="story-title"></h3>
+        <a href="https://techcrunch.com/2025/10/05/openai-and-jony-ive-may-be-struggling-to-figure-out-their-ai-device/" class="story-link" target="_blank" rel="noopener">OpenAI and Jony Ive Face Hurdles in AI Device Collaboration</a><br>
+        <div class="story-content">
+            
         </div>
-        <a href="https://techcrunch.com/2025/10/03/with-its-latest-acqui-hire-openai-is-doubling-down-on-personalized-consumer-ai/" target="_blank">Read more on TechCrunch</a>
-      </div>
+        
+        <div class="why-matters">
+            <h4>Why It Matters</h4>
+            <p>Why It Matters</p>
+        </div>
+        
+        
+        <div class="takeaways">
+            <h4>Key Takeaways</h4>
+            <ul>
+                <li>Hardware-software integration remains a tough challenge for AI-first devices.</li>
+<li>The outcome could influence the future of AI-powered consumer electronics.</li>
+<li>Industry observers are watching closely for signs of a new product category.</li>
+            </ul>
+        </div>
+        
+    </div>
+    
+            </div>
+        </section>
 
-      <div class="card">
-        <h3>The Reinforcement Gap — Or Why Some AI Skills Improve Faster Than Others</h3>
-        <p>New research highlights a “reinforcement gap” in AI training, where certain skills improve rapidly with reinforcement learning, while others stagnate. This phenomenon has implications for how AI systems are trained and what tasks they excel at, potentially explaining why some AI applications advance quickly while others lag.</p>
-        <p>Why It Matters: Understanding the reinforcement gap could lead to more effective AI training methodologies. It also underscores the need for diverse training approaches to achieve generalizable AI capabilities, rather than over-optimizing for narrow tasks.</p>
-        <div class="takeaways">
-          <strong>Key Takeaways:</strong>
-          <ul>
-            <li>Not all AI skills improve at the same rate with reinforcement learning.</li>
-            <li>The reinforcement gap affects which AI applications advance fastest.</li>
-            <li>Diverse training strategies may be needed for more balanced AI progress.</li>
-          </ul>
+        <!-- Product Launches -->
+        <section class="category-section" id="category-products" data-category="products">
+            <div class="category-header">
+                <span class="category-icon">🚀</span>
+                <h2 class="category-title">Product Launches</h2>
+                <span class="category-count" data-count="products">3 stories</span>
+            </div>
+            <div class="story-grid" id="products-stories">
+
+    <div class="story-card">
+        <h3 class="story-title"></h3>
+        <a href="https://www.theverge.com/entertainment/791353/sausage-legend-steam-launch-interview" class="story-link" target="_blank" rel="noopener">Sausage Legend: Hit Indie Game Heads to Steam</a><br>
+        <div class="story-content">
+            
         </div>
-        <a href="https://techcrunch.com/2025/10/05/the-reinforcement-gap-or-why-some-ai-skills-improve-faster-than-others/" target="_blank">Read more on TechCrunch</a>
-      </div>
+        
+        <div class="why-matters">
+            <h4>Why It Matters</h4>
+            <p>Why It Matters</p>
+        </div>
+        
+        
+        <div class="takeaways">
+            <h4>Key Takeaways</h4>
+            <ul>
+                <li>Indie games continue to thrive with creative, unconventional concepts.</li>
+<li>Steam remains a vital platform for indie developers seeking broader reach.</li>
+<li>Community-driven games can achieve mainstream success through viral appeal.</li>
+            </ul>
+        </div>
+        
+    </div>
+    
+
+    <div class="story-card">
+        <h3 class="story-title"></h3>
+        <a href="https://www.theverge.com/podcast/792339/version-history-podcast-hoverboards" class="story-link" target="_blank" rel="noopener">Version History Podcast Launches: Exploring Tech’s Past and Future</a><br>
+        <div class="story-content">
+            
+        </div>
+        
+        <div class="why-matters">
+            <h4>Why It Matters</h4>
+            <p>Why It Matters</p>
+        </div>
+        
+        
+        <div class="takeaways">
+            <h4>Key Takeaways</h4>
+            <ul>
+                <li>Podcasts are an increasingly popular medium for tech storytelling.</li>
+<li>Understanding tech history helps contextualize current innovation cycles.</li>
+<li>Media brands are investing in original content to engage tech-savvy audiences.</li>
+            </ul>
+        </div>
+        
+    </div>
+    
+
+    <div class="story-card">
+        <h3 class="story-title"></h3>
+        <a href="https://techcrunch.com/2025/10/04/instacrops-will-demo-its-water-saving-crop-boosting-ai-at-techcrunch-disrupt-2025/" class="story-link" target="_blank" rel="noopener">Instacrops to Demo Water-Saving AI at TechCrunch Disrupt</a><br>
+        <div class="story-content">
+            
+        </div>
+        
+        <div class="why-matters">
+            <h4>Why It Matters</h4>
+            <p>Why It Matters</p>
+        </div>
+        
+        
+        <div class="takeaways">
+            <h4>Key Takeaways</h4>
+            <ul>
+                <li>AI is playing a growing role in sustainable agriculture and resource management.</li>
+<li>Startups are tackling real-world problems with domain-specific AI solutions.</li>
+<li>TechCrunch Disrupt remains a launchpad for impactful new products.</li>
+            </ul>
+        </div>
+        
+    </div>
+    
+            </div>
+        </section>
+
+        <!-- GitHub Trending -->
+        <section class="category-section" id="category-github" data-category="github">
+            <div class="category-header">
+                <span class="category-icon">⭐</span>
+                <h2 class="category-title">GitHub Trending</h2>
+                <span class="category-count" data-count="github">4 repos</span>
+            </div>
+            <div class="story-grid" id="github-stories">
+
+    <div class="story-card">
+        <h3 class="story-title"></h3>
+        <a href="https://github.com/agentic-commerce-protocol/agentic-commerce-protocol" class="story-link" target="_blank" rel="noopener">agentic-commerce-protocol/agentic-commerce-protocol</a><br>
+        <div class="story-content">
+            
+        </div>
+        
+        <div class="why-matters">
+            <h4>Why It Matters</h4>
+            <p>Why It Matters</p>
+        </div>
+        
+        
+        <div class="takeaways">
+            <h4>Key Takeaways</h4>
+            <ul>
+                <li>Agentic commerce is a key trend in the evolution of digital marketplaces.</li>
+<li>Open protocols can accelerate adoption and innovation in autonomous transactions.</li>
+<li>Standardization is crucial for cross-platform agent collaboration.</li>
+            </ul>
+        </div>
+        
+    </div>
+    
+
+    <div class="story-card">
+        <h3 class="story-title"></h3>
+        <a href="https://github.com/neuphonic/neutts-air" class="story-link" target="_blank" rel="noopener">neuphonic/neutts-air</a><br>
+        <div class="story-content">
+            
+        </div>
+        
+        <div class="why-matters">
+            <h4>Why It Matters</h4>
+            <p>Why It Matters</p>
+        </div>
+        
+        
+        <div class="takeaways">
+            <h4>Key Takeaways</h4>
+            <ul>
+                <li>Text-to-speech is foundational for accessibility and voice-driven interfaces.</li>
+<li>Open-source TTS engines democratize access to high-quality speech synthesis.</li>
+<li>Real-time performance enables new applications in gaming and assistive tech.</li>
+            </ul>
+        </div>
+        
+    </div>
+    
+
+    <div class="story-card">
+        <h3 class="story-title"></h3>
+        <a href="https://github.com/Liquid4All/liquid-audio" class="story-link" target="_blank" rel="noopener">Liquid4All/liquid-audio</a><br>
+        <div class="story-content">
+            
+        </div>
+        
+        <div class="why-matters">
+            <h4>Why It Matters</h4>
+            <p>Why It Matters</p>
+        </div>
+        
+        
+        <div class="takeaways">
+            <h4>Key Takeaways</h4>
+            <ul>
+                <li>AI-driven music and sound design are rapidly advancing creative industries.</li>
+<li>Modular libraries lower the barrier for experimentation in audio ML.</li>
+<li>Open-source projects foster collaboration and innovation in digital audio.</li>
+            </ul>
+        </div>
+        
+    </div>
+    
+
+    <div class="story-card">
+        <h3 class="story-title"></h3>
+        <a href="https://github.com/liangdabiao/claude-data-analysis" class="story-link" target="_blank" rel="noopener">liangdabiao/claude-data-analysis</a><br>
+        <div class="story-content">
+            
+        </div>
+        
+        <div class="why-matters">
+            <h4>Why It Matters</h4>
+            <p>Why It Matters</p>
+        </div>
+        
+        
+        <div class="takeaways">
+            <h4>Key Takeaways</h4>
+            <ul>
+                <li>Understanding model outputs is essential for responsible AI deployment.</li>
+<li>Specialized tools help researchers optimize prompt design and evaluation.</li>
+<li>Community-driven analysis supports transparency in large language models.</li>
+            </ul>
+        </div>
+        
+    </div>
+    
+            </div>
+        </section>
+
+        <!-- Developer Tools -->
+        <section class="category-section" id="category-dev" data-category="dev">
+            <div class="category-header">
+                <span class="category-icon">🔨</span>
+                <h2 class="category-title">Developer Tools</h2>
+                <span class="category-count" data-count="dev">3 stories</span>
+            </div>
+            <div class="story-grid" id="dev-stories">
+
+    <div class="story-card">
+        <h3 class="story-title"></h3>
+        <a href="https://techcrunch.com/2025/10/05/californias-new-ai-safety-law-shows-regulation-and-innovation-dont-have-to-clash/" class="story-link" target="_blank" rel="noopener">California’s AI Safety Law: New Rules for AI Developers</a><br>
+        <div class="story-content">
+            
+        </div>
+        
+        <div class="why-matters">
+            <h4>Why It Matters</h4>
+            <p>Why It Matters</p>
+        </div>
+        
+        
+        <div class="takeaways">
+            <h4>Key Takeaways</h4>
+            <ul>
+                <li>Developers face new legal obligations in AI safety and transparency.</li>
+<li>Compliance will shape the design and deployment of future AI tools.</li>
+<li>California’s rules may influence global standards for AI development.</li>
+            </ul>
+        </div>
+        
+    </div>
+    
+
+    <div class="story-card">
+        <h3 class="story-title"></h3>
+        <a href="https://techcrunch.com/2025/10/04/sam-altman-says-sora-will-add-granular-opt-in-copyright-controls/" class="story-link" target="_blank" rel="noopener">Sora’s Copyright Controls: Empowering Developers and Creators</a><br>
+        <div class="story-content">
+            
+        </div>
+        
+        <div class="why-matters">
+            <h4>Why It Matters</h4>
+            <p>Why It Matters</p>
+        </div>
+        
+        
+        <div class="takeaways">
+            <h4>Key Takeaways</h4>
+            <ul>
+                <li>Developers gain more control over data used in generative AI systems.</li>
+<li>Opt-in models could reduce legal risk and build trust with creators.</li>
+<li>Clear copyright policies are essential for sustainable AI innovation.</li>
+            </ul>
+        </div>
+        
+    </div>
+    
+
+    <div class="story-card">
+        <h3 class="story-title"></h3>
+        <a href="https://techcrunch.com/2025/10/03/what-to-expect-at-openais-devday-2025-and-how-to-watch-it/" class="story-link" target="_blank" rel="noopener">OpenAI DevDay 2025: Developer-Focused Announcements Ahead</a><br>
+        <div class="story-content">
+            
+        </div>
+        
+        <div class="why-matters">
+            <h4>Why It Matters</h4>
+            <p>Why It Matters</p>
+        </div>
+        
+        
+        <div class="takeaways">
+            <h4>Key Takeaways</h4>
+            <ul>
+                <li>Developer events drive innovation and adoption in the AI ecosystem.</li>
+<li>New tools can lower barriers for startups and enterprises alike.</li>
+<li>Continuous platform updates keep OpenAI competitive in a fast-moving market.</li>
+            </ul>
+        </div>
+        
+    </div>
+    
+            </div>
+        </section>
+
+        <!-- General Tech News -->
+        <section class="category-section" id="category-news" data-category="news">
+            <div class="category-header">
+                <span class="category-icon">📰</span>
+                <h2 class="category-title">General Tech News</h2>
+                <span class="category-count" data-count="news">5 stories</span>
+            </div>
+            <div class="story-grid" id="news-stories">
+
+    <div class="story-card">
+        <h3 class="story-title"></h3>
+        <a href="https://techcrunch.com/2025/10/05/openai-and-jony-ive-may-be-struggling-to-figure-out-their-ai-device/" class="story-link" target="_blank" rel="noopener">OpenAI and Jony Ive: Uncertainty Over AI Device Vision</a><br>
+        <div class="story-content">
+            
+        </div>
+        
+        <div class="why-matters">
+            <h4>Why It Matters</h4>
+            <p>Why It Matters</p>
+        </div>
+        
+        
+        <div class="takeaways">
+            <h4>Key Takeaways</h4>
+            <ul>
+                <li>AI hardware remains an uncharted frontier for many leading tech firms.</li>
+<li>Success could redefine how consumers interact with AI in daily life.</li>
+<li>Partnerships between AI labs and design leaders are crucial for user adoption.</li>
+            </ul>
+        </div>
+        
+    </div>
+    
+
+    <div class="story-card">
+        <h3 class="story-title"></h3>
+        <a href="https://techcrunch.com/2025/10/05/the-reinforcement-gap-or-why-some-ai-skills-improve-faster-than-others/" class="story-link" target="_blank" rel="noopener">The Reinforcement Gap: Why Some AI Skills Advance Faster</a><br>
+        <div class="story-content">
+            
+        </div>
+        
+        <div class="why-matters">
+            <h4>Why It Matters</h4>
+            <p>Why It Matters</p>
+        </div>
+        
+        
+        <div class="takeaways">
+            <h4>Key Takeaways</h4>
+            <ul>
+                <li>Understanding skill gaps can help direct research and resource allocation in AI.</li>
+<li>Balanced progress is needed to avoid over-optimizing narrow capabilities.</li>
+<li>Feedback-rich environments accelerate AI learning and adaptation.</li>
+            </ul>
+        </div>
+        
+    </div>
+    
+
+    <div class="story-card">
+        <h3 class="story-title"></h3>
+        <a href="https://techcrunch.com/2025/10/04/if-youre-not-an-ai-startup-good-luck-raising-money-from-vcs/" class="story-link" target="_blank" rel="noopener">AI Startups Dominate VC Funding, Others Left Behind</a><br>
+        <div class="story-content">
+            
+        </div>
+        
+        <div class="why-matters">
+            <h4>Why It Matters</h4>
+            <p>Why It Matters</p>
+        </div>
+        
+        
+        <div class="takeaways">
+            <h4>Key Takeaways</h4>
+            <ul>
+                <li>Non-AI startups may struggle to survive in a funding environment skewed toward AI.</li>
+<li>Investor enthusiasm for AI could lead to market bubbles or overlooked risks.</li>
+<li>Entrepreneurs may feel pressured to pivot toward AI, even if not core to their mission.</li>
+            </ul>
+        </div>
+        
+    </div>
+    
+
+    <div class="story-card">
+        <h3 class="story-title"></h3>
+        <a href="https://techcrunch.com/2025/10/04/instacrops-will-demo-its-water-saving-crop-boosting-ai-at-techcrunch-disrupt-2025/" class="story-link" target="_blank" rel="noopener">Instacrops: AI for Sustainable Agriculture</a><br>
+        <div class="story-content">
+            
+        </div>
+        
+        <div class="why-matters">
+            <h4>Why It Matters</h4>
+            <p>Why It Matters</p>
+        </div>
+        
+        
+        <div class="takeaways">
+            <h4>Key Takeaways</h4>
+            <ul>
+                <li>AI is being applied to solve critical sustainability challenges.</li>
+<li>Agri-tech innovation can improve food security and resource efficiency.</li>
+<li>Startups are leading the way in domain-specific AI applications.</li>
+            </ul>
+        </div>
+        
+    </div>
+    
+
+    <div class="story-card">
+        <h3 class="story-title"></h3>
+        <a href="https://techcrunch.com/2025/10/03/with-its-latest-acqui-hire-openai-is-doubling-down-on-personalized-consumer-ai/" class="story-link" target="_blank" rel="noopener">OpenAI’s Acqui-Hire Strategy: Focus on Consumer AI</a><br>
+        <div class="story-content">
+            
+        </div>
+        
+        <div class="why-matters">
+            <h4>Why It Matters</h4>
+            <p>Why It Matters</p>
+        </div>
+        
+        
+        <div class="takeaways">
+            <h4>Key Takeaways</h4>
+            <ul>
+                <li>Talent acquisition is a key lever for innovation in competitive AI markets.</li>
+<li>Personalized AI could drive the next wave of consumer tech adoption.</li>
+<li>OpenAI’s moves signal a shift toward user-centric product development.</li>
+            </ul>
+        </div>
+        
+    </div>
+    
+            </div>
+        </section>
     </div>
 
-    <h2>Product Launches</h2>
-    <div class="card-grid">
-      <div class="card">
-        <h3>Sausage Legend Steam Launch</h3>
-        <p>The developers behind the cult hit “Sausage Legend,” a quirky sausage-dueling game, are launching on Steam, hoping to reach a wider audience. The game, known for its humor and unique mechanics, has already built a dedicated following, and the Steam release is expected to significantly boost its visibility and player base.</p>
-        <p>Why It Matters: Indie games like Sausage Legend demonstrate the vitality of the gaming ecosystem beyond AAA titles. A successful Steam launch can transform a niche hit into a mainstream success, showcasing the power of digital distribution platforms for independent creators.</p>
-        <div class="takeaways">
-          <strong>Key Takeaways:</strong>
-          <ul>
-            <li>Sausage Legend is expanding to Steam, targeting a global audience.</li>
-            <li>The game’s unique premise has already earned a loyal fanbase.</li>
-            <li>Steam remains a critical platform for indie game success.</li>
-          </ul>
-        </div>
-        <a href="https://www.theverge.com/entertainment/791353/sausage-legend-steam-launch-interview" target="_blank">Read more on The Verge</a>
-      </div>
+    <script>
+        // Parse the existing HTML and extract stories
+        function parseStoriesFromHTML() {
+            // This will be populated by the actual content
+            // For now, returning empty - will be filled by update script
+            return {
+                date: 'Sunday, October 05, 2025',
+                categories: {
+                    ai: [],
+                    products: [],
+                    github: [],
+                    dev: [],
+                    news: []
+                }
+            };
+        }
 
-      <div class="card">
-        <h3>Version History Podcast Goes Live</h3>
-        <p>The Verge’s “Version History” podcast, exploring the evolution of tech products and culture, is now available. The debut episode dives into the story of hoverboards, tracing their rise, fall, and cultural impact. The podcast aims to provide context and analysis for tech enthusiasts and historians alike.</p>
-        <p>Why It Matters: As tech accelerates, understanding the history behind products and trends becomes more valuable. “Version History” fills a gap in tech media, offering deep dives that go beyond the headlines and help listeners make sense of the present by understanding the past.</p>
-        <div class="takeaways">
-          <strong>Key Takeaways:</strong>
-          <ul>
-            <li>“Version History” podcast launches with a focus on tech product evolution.</li>
-            <li>The first episode explores the hoverboard phenomenon.</li>
-            <li>The series aims to provide historical context for current tech trends.</li>
-          </ul>
-        </div>
-        <a href="https://www.theverge.com/podcast/792339/version-history-podcast-hoverboards" target="_blank">Read more on The Verge</a>
-      </div>
+        // Initialize
+        let allStories = parseStoriesFromHTML();
+        let currentFilter = 'all';
+        let searchTerm = '';
 
-      <div class="card">
-        <h3>Instacrops to Demo Water-Saving, Crop-Boosting AI at TechCrunch Disrupt 2025</h3>
-        <p>Agtech startup Instacrops will showcase its AI-powered platform at TechCrunch Disrupt 2025. The system uses machine learning to optimize water usage and increase crop yields, addressing critical challenges in sustainable agriculture. The demo will highlight real-world impact and scalability.</p>
-        <p>Why It Matters: With climate change and resource scarcity pressing issues, AI-driven agtech solutions like Instacrops’ platform are increasingly vital. Successful deployment could lead to widespread adoption, helping farmers do more with less and contributing to global food security.</p>
-        <div class="takeaways">
-          <strong>Key Takeaways:</strong>
-          <ul>
-            <li>Instacrops’ AI platform optimizes water and boosts crop production.</li>
-            <li>The TechCrunch Disrupt demo will highlight practical benefits for farmers.</li>
-            <li>Such innovations are key to sustainable agriculture in a changing climate.</li>
-          </ul>
-        </div>
-        <a href="https://techcrunch.com/2025/10/04/instacrops-will-demo-its-water-saving-crop-boosting-ai-at-techcrunch-disrupt-2025/" target="_blank">Read more on TechCrunch</a>
-      </div>
-    </div>
+        // Set date
+        document.getElementById('news-date').textContent = 'Sunday, October 05, 2025';
 
-    <h2>GitHub Trending</h2>
-    <div class="card-grid">
-      <div class="card">
-        <h3>agentic-commerce-protocol/agentic-commerce-protocol</h3>
-        <p><span class="repo-stars">Stars: Trending</span><br>
-        An open protocol for agentic e-commerce, enabling autonomous AI agents to buy, sell, and negotiate on behalf of users. The project aims to create a decentralized framework for the next generation of digital commerce, reducing friction and increasing efficiency.</p>
-        <p>Why It Matters: As AI agents become more capable, protocols like this could revolutionize how online transactions are conducted, enabling new business models and reducing the need for human intervention in routine commerce.</p>
-        <div class="takeaways">
-          <strong>Key Takeaways:</strong>
-          <ul>
-            <li>Decentralized protocol for AI-driven e-commerce.</li>
-            <li>Enables autonomous buying, selling, and negotiation.</li>
-            <li>Potential to disrupt traditional online marketplaces.</li>
-          </ul>
-        </div>
-        <a href="https://github.com/agentic-commerce-protocol/agentic-commerce-protocol" target="_blank">View on GitHub</a>
-      </div>
+        // Category filtering
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.category;
+                filterStories();
+            });
+        });
 
-      <div class="card">
-        <h3>neuphonic/neutts-air</h3>
-        <p><span class="repo-stars">Stars: Trending</span><br>
-        A lightweight, open-source text-to-speech (TTS) engine optimized for edge devices. Neutts-air offers high-quality voice synthesis with minimal resource usage, making it ideal for IoT, mobile apps, and other environments where cloud connectivity is limited.</p>
-        <p>Why It Matters: Edge-based TTS reduces latency, enhances privacy, and lowers costs compared to cloud solutions. As voice interfaces proliferate, projects like Neutts-air are critical for enabling offline, responsive voice experiences.</p>
-        <div class="takeaways">
-          <strong>Key Takeaways:</strong>
-          <ul>
-            <li>Open-source, edge-optimized TTS engine.</li>
-            <li>Enables high-quality voice synthesis without cloud dependency.</li>
-            <li>Ideal for IoT, mobile, and privacy-focused applications.</li>
-          </ul>
-        </div>
-        <a href="https://github.com/neuphonic/neutts-air" target="_blank">View on GitHub</a>
-      </div>
+        // Search
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            searchTerm = e.target.value.toLowerCase();
+            filterStories();
+        });
 
-      <div class="card">
-        <h3>Liquid4All/liquid-audio</h3>
-        <p><span class="repo-stars">Stars: Trending</span><br>
-        A modular audio processing library designed for real-time, low-latency applications. Liquid-audio supports a wide range of audio effects, filters, and synthesis techniques, with bindings for multiple programming languages.</p>
-        <p>Why It Matters: Real-time audio processing is essential for music production, gaming, and teleconferencing. Open-source libraries like Liquid-audio empower developers to build custom audio solutions without reinventing the wheel.</p>
-        <div class="takeaways">
-          <strong>Key Takeaways:</strong>
-          <ul>
-            <li>Modular, real-time audio processing library.</li>
-            <li>Supports diverse audio effects and synthesis.</li>
-            <li>Multi-language bindings for broad developer adoption.</li>
-          </ul>
-        </div>
-        <a href="https://github.com/Liquid4All/liquid-audio" target="_blank">View on GitHub</a>
-      </div>
+        function filterStories() {
+            let visibleCount = 0;
 
-      <div class="card">
-        <h3>liangdabiao/claude-data-analysis</h3>
-        <p><span class="repo-stars">Stars: Trending</span><br>
-        A collection of Jupyter notebooks and tools for data analysis using Anthropic’s Claude models. The repo provides practical examples, benchmarks, and best practices for leveraging Claude in data science workflows.</p>
-        <p>Why It Matters: As AI models like Claude become more accessible, sharing practical use cases and analysis techniques accelerates adoption and innovation in data science. This repo is a valuable resource for practitioners exploring the capabilities of advanced language models.</p>
-        <div class="takeaways">
-          <strong>Key Takeaways:</strong>
-          <ul>
-            <li>Practical data analysis examples with Claude AI.</li>
-            <li>Includes benchmarks and best practices.</li>
-            <li>Accelerates adoption of advanced language models in data science.</li>
-          </ul>
-        </div>
-        <a href="https://github.com/liangdabiao/claude-data-analysis" target="_blank">View on GitHub</a>
-      </div>
-    </div>
+            // Show/hide category sections
+            document.querySelectorAll('.category-section').forEach(section => {
+                const category = section.dataset.category;
+                
+                if (currentFilter === 'all' || currentFilter === category) {
+                    section.classList.remove('hidden');
+                    
+                    // Filter stories within category by search term
+                    const stories = section.querySelectorAll('.story-card');
+                    stories.forEach(story => {
+                        const text = story.textContent.toLowerCase();
+                        if (searchTerm === '' || text.includes(searchTerm)) {
+                            story.classList.remove('hidden');
+                            visibleCount++;
+                        } else {
+                            story.classList.add('hidden');
+                        }
+                    });
+                } else {
+                    section.classList.add('hidden');
+                }
+            });
 
-    <h2>Developer Tools</h2>
-    <div class="card-grid">
-      <div class="card">
-        <h3>GitHub Copilot’s Agent Mode Goes Mainstream</h3>
-        <p>GitHub Copilot’s new agent mode is now in preview across major IDEs, enabling developers to assign complex tasks—like refactoring, test coverage, and feature implementation—directly to the AI. The agent works autonomously and asynchronously, acting as a virtual team member that can plan, write, and even submit pull requests for review[1][2].</p>
-        <p>Why It Matters: This represents a leap beyond code completion, transforming Copilot into a proactive coding partner. By automating multi-step workflows, it frees developers to focus on higher-level design and innovation, potentially accelerating software delivery and reducing burnout[1][2].</p>
-        <div class="takeaways">
-          <strong>Key Takeaways:</strong>
-          <ul>
-            <li>Copilot agent mode automates complex dev tasks across the lifecycle.</li>
-            <li>Supports refactoring, testing, and feature implementation autonomously.</li>
-            <li>Now in preview for VS Code, with JetBrains and Xcode support coming soon[2].</li>
-          </ul>
-        </div>
-      </div>
+            // Update count
+            document.getElementById('story-count').textContent = `${visibleCount} ${visibleCount === 1 ? 'story' : 'stories'}`;
 
-      <div class="card">
-        <h3>GitHub Copilot to Be Open Sourced in VS Code</h3>
-        <p>Microsoft announced at Build 2025 that GitHub Copilot will be open sourced and integrated directly into the Visual Studio Code repository. This move is aimed at fostering community-driven innovation and giving developers more transparency and control over the AI coding assistant’s future[2].</p>
-        <p>Why It Matters: Open sourcing Copilot could lead to faster iteration, broader adoption, and more robust integrations. It also reflects a commitment to transparency in AI-assisted development, addressing concerns about black-box tools in critical workflows[2].</p>
-        <div class="takeaways">
-          <strong>Key Takeaways:</strong>
-          <ul>
-            <li>GitHub Copilot will be open sourced within the VS Code project.</li>
-            <li>Encourages community contributions and transparency.</li>
-            <li>Sets a precedent for open, collaborative AI tooling in development[2].</li>
-          </ul>
-        </div>
-      </div>
+            // Show/hide no results
+            if (visibleCount === 0) {
+                document.getElementById('no-results').classList.remove('hidden');
+            } else {
+                document.getElementById('no-results').classList.add('hidden');
+            }
+        }
 
-      <div class="card">
-        <h3>PostgreSQL Support and App Modernization in Copilot</h3>
-        <p>GitHub Copilot now offers preview support for PostgreSQL, allowing developers to interact with databases using natural language directly in VS Code. Additionally, new app modernization features for Java and .NET enable Copilot to autonomously upgrade and remediate legacy codebases, streamlining maintenance and reducing technical debt[2].</p>
-        <p>Why It Matters: Integrating database context and modernization tools into the coding workflow reduces context switching and accelerates legacy system upgrades. This positions Copilot as a comprehensive assistant for both new development and maintenance tasks[2].</p>
-        <div class="takeaways">
-          <strong>Key Takeaways:</strong>
-          <ul>
-            <li>Natural language PostgreSQL queries now supported in Copilot.</li>
-            <li>Autonomous Java and .NET app modernization reduces upgrade pain.</li>
-            <li>Copilot is evolving into a full-stack development assistant[2].</li>
-          </ul>
-        </div>
-      </div>
-    </div>
-
-    <h2>General Tech News</h2>
-    <div class="card-grid">
-      <div class="card">
-        <h3>If You’re Not an AI Startup, Good Luck Raising Money from VCs</h3>
-        <p>Venture capital is increasingly concentrated on AI startups, leaving non-AI tech companies struggling to secure funding. The trend reflects both the hype around generative AI and investors’ belief in its transformative potential across industries.</p>
-        <p>Why It Matters: The funding landscape is becoming bifurcated, with AI companies enjoying a disproportionate share of capital. This could accelerate innovation in AI but may also starve other promising tech sectors of resources, potentially leading to a less diverse tech ecosystem.</p>
-        <div class="takeaways">
-          <strong>Key Takeaways:</strong>
-          <ul>
-            <li>VC investment is heavily skewed toward AI startups.</li>
-            <li>Non-AI tech companies face growing challenges in raising funds.</li>
-            <li>The trend could reshape the broader tech innovation landscape.</li>
-          </ul>
-        </div>
-        <a href="https://techcrunch.com/2025/10/04/if-youre-not-an-ai-startup-good-luck-raising-money-from-vcs/" target="_blank">Read more on TechCrunch</a>
-      </div>
-
-      <div class="card">
-        <h3>Instacrops Will Demo Its Water-Saving, Crop-Boosting AI at TechCrunch Disrupt 2025</h3>
-        <p>Agtech startup Instacrops is set to demonstrate its AI platform at TechCrunch Disrupt 2025. The technology optimizes irrigation and increases crop yields, addressing critical challenges in sustainable agriculture. The demo will highlight real-world impact and scalability.</p>
-        <p>Why It Matters: With climate change and resource scarcity pressing issues, AI-driven agtech solutions like Instacrops’ platform are increasingly vital. Successful deployment could lead to widespread adoption, helping farmers do more with less and contributing to global food security.</p>
-        <div class="takeaways">
-          <strong>Key Takeaways:</strong>
-          <ul>
-            <li>Instacrops’ AI platform optimizes water and boosts crop production.</li>
-            <li>The TechCrunch Disrupt demo will highlight practical benefits for farmers.</li>
-            <li>Such innovations are key to sustainable agriculture in a changing climate.</li>
-          </ul>
-        </div>
-        <a href="https://techcrunch.com/2025/10/04/instacrops-will-demo-its-water-saving-crop-boosting-ai-at-techcrunch-disrupt-2025/" target="_blank">Read more on TechCrunch</a>
-      </div>
-
-      <div class="card">
-        <h3>The Best Lists to Keep — And the Best Ways to Keep Them</h3>
-        <p>The Verge explores the art and science of list-making in the digital age, reviewing top apps for to-do lists, shopping, and more. The piece offers practical advice for organizing personal and professional life, highlighting the enduring value of simple tools in a complex world.</p>
-        <p>Why It Matters: Despite advances in AI and automation, the humble list remains a cornerstone of productivity. Understanding how to effectively use list apps can save time, reduce stress, and improve outcomes in both work and life.</p>
-        <div class="takeaways">
-          <strong>Key Takeaways:</strong>
-          <ul>
-            <li>List-making apps are more popular than ever.</li>
-            <li>Choosing the right tool depends on individual needs and workflows.</li>
-            <li>Effective list management is a timeless productivity hack.</li>
-          </ul>
-        </div>
-        <a href="https://www.theverge.com/tech/791905/best-lists-apps-to-do-shopping-installer" target="_blank">Read more on The Verge</a>
-      </div>
-
-      <div class="card">
-        <h3>OpenAI and Jony Ive May Be Struggling to Figure Out Their AI Device</h3>
-        <p>Reports suggest that OpenAI’s collaboration with famed designer Jony Ive to create a consumer AI device is facing challenges. While details are scarce, insiders indicate that defining the product’s purpose and differentiating it in a crowded market are proving difficult.</p>
-        <p>Why It Matters: A hardware play from OpenAI, especially with Ive’s design pedigree, could redefine how consumers interact with AI. However, the difficulties highlight the complexities of moving from software to hardware and the risks of entering a competitive, fast-evolving space.</p>
-        <div class="takeaways">
-          <strong>Key Takeaways:</strong>
-          <ul>
-            <li>OpenAI and Jony Ive’s AI device project is encountering conceptual hurdles.</li>
-            <li>The partnership underscores the growing intersection of AI and hardware design.</li>
-            <li>Success could disrupt consumer tech, but the path is uncertain.</li>
-          </ul>
-        </div>
-        <a href="https://techcrunch.com/2025/10/05/openai-and-jony-ive-may-be-struggling-to-figure-out-their-ai-device/" target="_blank">Read more on TechCrunch</a>
-      </div>
-
-      <div class="card">
-        <h3>The Reinforcement Gap — Or Why Some AI Skills Improve Faster Than Others</h3>
-        <p>New research highlights a “reinforcement gap” in AI training, where certain skills improve rapidly with reinforcement learning, while others stagnate. This phenomenon has implications for how AI systems are trained and what tasks they excel at, potentially explaining why some AI applications advance quickly while others lag.</p>
-        <p>Why It Matters: Understanding the reinforcement gap could lead to more effective AI training methodologies. It also underscores the need for diverse training approaches to achieve generalizable AI capabilities, rather than over-optimizing for narrow tasks.</p>
-        <div class="takeaways">
-          <strong>Key Takeaways:</strong>
-          <ul>
-            <li>Not all AI skills improve at the same rate with reinforcement learning.</li>
-            <li>The reinforcement gap affects which AI applications advance fastest.</li>
-            <li>Diverse training strategies may be needed for more balanced AI progress.</li>
-          </ul>
-        </div>
-        <a href="https://techcrunch.com/2025/10/05/the-reinforcement-gap-or-why-some-ai-skills-improve-faster-than-others/" target="_blank">Read more on TechCrunch</a>
-      </div>
-    </div>
-  </div>
-
-  <footer>
-    <p>Tech News Digest — October 05, 2025. Curated for developers, founders, and tech enthusiasts.</p>
-  </footer>
+        // Hide loading
+        document.getElementById('loading').classList.add('hidden');
+    </script>
 </body>
 </html>
