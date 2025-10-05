@@ -2,11 +2,7 @@ name: Daily News Summary
 
 on:
   schedule:
-    # Runs at 7 AM UTC every day (adjust timezone as needed)
-    # Use https://crontab.guru to customize the schedule
     - cron: '0 7 * * *'
-  
-  # Allows manual trigger from Actions tab
   workflow_dispatch:
 
 jobs:
@@ -14,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     
     permissions:
-      contents: write  # Needed to commit files
+      contents: write
     
     steps:
       - name: Checkout repository
@@ -39,11 +35,17 @@ jobs:
         run: |
           python generate_news.py
       
+      - name: Transform to interactive viewer
+        run: python transform_news.py
+      
+      - name: Update landing page archive
+        run: python update_index.py
+      
       - name: Commit and push changes
         run: |
           git config user.name "News Agent Bot"
           git config user.email "actions@github.com"
-          git add output/*.html
+          git add output/*.html archive.json index.html
           git commit -m "📰 Daily news summary - $(date +'%Y-%m-%d %H:%M UTC')" || echo "No changes to commit"
           git push
       
