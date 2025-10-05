@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech News Daily - Interactive Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --border: #334155;
+            --text-primary: #e5e7eb;
+            --text-secondary: #94a3b8;
+            --accent: #60a5fa;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: var(--primary-gradient);
+            padding: 40px 20px;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .header .date {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+        }
+
+        .header .back-link {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: white;
+            text-decoration: none;
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .header .back-link:hover {
+            transform: translateY(-50%) scale(1.2);
+        }
+
+        /* Controls */
+        .controls {
+            background: var(--bg-card);
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 120px;
+            z-index: 99;
+        }
+
+        .controls-inner {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .search-box input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .category-filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 10px 20px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .filter-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        .story-count {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-left: auto;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .category-section {
+            margin-bottom: 60px;
+        }
+
+        .category-section.hidden {
+            display: none;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .category-icon {
+            font-size: 2rem;
+        }
+
+        .category-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .category-count {
+            margin-left: auto;
+            background: var(--bg-card);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Story Grid */
+        .story-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .story-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .story-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-gradient);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .story-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            border-color: var(--accent);
+        }
+
+        .story-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .story-card.hidden {
+            display: none;
+        }
+
+        .story-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .story-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+            transition: color 0.3s ease;
+        }
+
+        .story-link:hover {
+            color: #93c5fd;
+            text-decoration: underline;
+        }
+
+        .story-content {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .why-matters {
+            background: rgba(96, 165, 250, 0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border-left: 3px solid var(--accent);
+        }
+
+        .why-matters h4 {
+            color: var(--accent);
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .why-matters p {
+            font-style: italic;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .takeaways {
+            margin-top: 15px;
+        }
+
+        .takeaways h4 {
+            color: #a78bfa;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .takeaways ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .takeaways li {
+            padding: 5px 0 5px 20px;
+            position: relative;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .takeaways li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #a78bfa;
+            font-weight: bold;
+        }
+
+        /* No Results */
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .no-results.hidden {
+            display: none;
+        }
+
+        .no-results h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .header .back-link {
+                position: static;
+                transform: none;
+                display: block;
+                margin-bottom: 15px;
+            }
+
+            .controls-inner {
+                flex-direction: column;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .story-count {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .story-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .category-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .category-count {
+                margin-left: 0;
+            }
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .loading.hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html" class="back-link">←</a>
+        <h1>Tech News Daily</h1>
+        <p class="date" id="news-date">Loading...</p>
+    </header>
+
+    <div class="controls">
+        <div class="controls-inner">
+            <div class="search-box">
+                <input type="text" id="search-input" placeholder="Search stories...">
+            </div>
+            <div class="category-filters">
+                <button class="filter-btn active" data-category="all">All</button>
+                <button class="filter-btn" data-category="ai">🤖 AI</button>
+                <button class="filter-btn" data-category="products">🚀 Products</button>
+                <button class="filter-btn" data-category="github">⭐ GitHub</button>
+                <button class="filter-btn" data-category="dev">🔨 Dev Tools</button>
+                <button class="filter-btn" data-category="news">📰 News</button>
+            </div>
+            <div class="story-count" id="story-count">20 stories</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="loading" id="loading">
+            <h3>Loading news...</h3>
+        </div>
+
+        <div class="no-results hidden" id="no-results">
+            <h3>No stories found</h3>
+            <p>Try a different search term or filter</p>
+        </div>
+
+        <!-- AI Company Updates -->
+        <section class="category-section" id="category-ai" data-category="ai">
+            <div class="category-header">
+                <span class="category-icon">🤖</span>
+                <h2 class="category-title">AI Company Updates</h2>
+                <span class="category-count" data-count="ai">5 stories</span>
+            </div>
+            <div class="story-grid" id="ai-stories">
+                <!-- Stories will be injected here -->
+            </div>
+        </section>
+
+        <!-- Product Launches -->
+        <section class="category-section" id="category-products" data-category="products">
+            <div class="category-header">
+                <span class="category-icon">🚀</span>
+                <h2 class="category-title">Product Launches</h2>
+                <span class="category-count" data-count="products">3 stories</span>
+            </div>
+            <div class="story-grid" id="products-stories">
+                <!-- Stories will be injected here -->
+            </div>
+        </section>
+
+        <!-- GitHub Trending -->
+        <section class="category-section" id="category-github" data-category="github">
+            <div class="category-header">
+                <span class="category-icon">⭐</span>
+                <h2 class="category-title">GitHub Trending</h2>
+                <span class="category-count" data-count="github">4 repos</span>
+            </div>
+            <div class="story-grid" id="github-stories">
+                <!-- Stories will be injected here -->
+            </div>
+        </section>
+
+        <!-- Developer Tools -->
+        <section class="category-section" id="category-dev" data-category="dev">
+            <div class="category-header">
+                <span class="category-icon">🔨</span>
+                <h2 class="category-title">Developer Tools</h2>
+                <span class="category-count" data-count="dev">3 stories</span>
+            </div>
+            <div class="story-grid" id="dev-stories">
+                <!-- Stories will be injected here -->
+            </div>
+        </section>
+
+        <!-- General Tech News -->
+        <section class="category-section" id="category-news" data-category="news">
+            <div class="category-header">
+                <span class="category-icon">📰</span>
+                <h2 class="category-title">General Tech News</h2>
+                <span class="category-count" data-count="news">5 stories</span>
+            </div>
+            <div class="story-grid" id="news-stories">
+                <!-- Stories will be injected here -->
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Parse the existing HTML and extract stories
+        function parseStoriesFromHTML() {
+            // This will be populated by the actual content
+            // For now, returning empty - will be filled by update script
+            return {
+                date: 'Sunday, October 05, 2025',
+                categories: {
+                    ai: [],
+                    products: [],
+                    github: [],
+                    dev: [],
+                    news: []
+                }
+            };
+        }
+
+        // Initialize
+        let allStories = parseStoriesFromHTML();
+        let currentFilter = 'all';
+        let searchTerm = '';
+
+        // Set date
+        document.getElementById('news-date').textContent = allStories.date;
+
+        // Category filtering
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.category;
+                filterStories();
+            });
+        });
+
+        // Search
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            searchTerm = e.target.value.toLowerCase();
+            filterStories();
+        });
+
+        function filterStories() {
+            let visibleCount = 0;
+
+            // Show/hide category sections
+            document.querySelectorAll('.category-section').forEach(section => {
+                const category = section.dataset.category;
+                
+                if (currentFilter === 'all' || currentFilter === category) {
+                    section.classList.remove('hidden');
+                    
+                    // Filter stories within category by search term
+                    const stories = section.querySelectorAll('.story-card');
+                    stories.forEach(story => {
+                        const text = story.textContent.toLowerCase();
+                        if (searchTerm === '' || text.includes(searchTerm)) {
+                            story.classList.remove('hidden');
+                            visibleCount++;
+                        } else {
+                            story.classList.add('hidden');
+                        }
+                    });
+                } else {
+                    section.classList.add('hidden');
+                }
+            });
+
+            // Update count
+            document.getElementById('story-count').textContent = `${visibleCount} ${visibleCount === 1 ? 'story' : 'stories'}`;
+
+            // Show/hide no results
+            if (visibleCount === 0) {
+                document.getElementById('no-results').classList.remove('hidden');
+            } else {
+                document.getElementById('no-results').classList.add('hidden');
+            }
+        }
+
+        // Hide loading
+        document.getElementById('loading').classList.add('hidden');
+    </script>
+</body>
+</html>
