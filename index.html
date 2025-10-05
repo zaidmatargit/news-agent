@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech News Daily - Your AI-Powered News Digest</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: #e5e7eb;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 0 40px;
+        }
+
+        h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+        }
+
+        .tagline {
+            font-size: 1.3rem;
+            color: #94a3b8;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: #64748b;
+        }
+
+        .hero-section {
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 40px;
+            margin: 40px 0;
+            border: 1px solid #334155;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-section h2 {
+            color: #60a5fa;
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .latest-cta {
+            display: inline-block;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            padding: 18px 40px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .latest-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+
+        .feature-card {
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            border-color: #60a5fa;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-card h3 {
+            color: #f1f5f9;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+
+        .feature-card p {
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+
+        .archive-section {
+            margin: 60px 0;
+        }
+
+        .archive-section h2 {
+            color: #60a5fa;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .archive-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .archive-card {
+            background: #1e293b;
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        .archive-card:hover {
+            transform: translateY(-5px);
+            border-color: #8b5cf6;
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.2);
+        }
+
+        .archive-date {
+            color: #8b5cf6;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .archive-preview {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .sources-section {
+            margin: 60px 0;
+            background: #1e293b;
+            border-radius: 16px;
+            padding: 40px;
+            border: 1px solid #334155;
+        }
+
+        .sources-section h2 {
+            color: #60a5fa;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .sources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .source-category h3 {
+            color: #8b5cf6;
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        .source-category ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .source-category li {
+            color: #cbd5e1;
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+            font-size: 0.95rem;
+        }
+
+        .source-category li::before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #60a5fa;
+            font-weight: bold;
+        }
+
+        footer {
+            text-align: center;
+            padding: 60px 0 40px;
+            color: #64748b;
+            border-top: 1px solid #334155;
+            margin-top: 80px;
+        }
+
+        footer a {
+            color: #60a5fa;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .tagline {
+                font-size: 1.1rem;
+            }
+
+            .stats {
+                gap: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📰 Tech News Daily</h1>
+            <p class="tagline">AI-Powered Technology News Digest</p>
+            <p class="subtitle">20 top stories • Real sources • Updated daily</p>
+        </header>
+
+        <div class="hero-section">
+            <h2>🚀 Today's Top Tech News</h2>
+            <p>Get your comprehensive daily digest from 12+ direct sources: AI company blogs, GitHub trending, Product Hunt launches, and more. Real announcements, no middlemen.</p>
+            <a href="./output/latest.html" class="latest-cta">Read Today's Summary →</a>
+        </div>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-number">20</div>
+                <div class="stat-label">Curated Stories</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">12+</div>
+                <div class="stat-label">Direct Sources</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Primary Sources</div>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3>AI Company Blogs</h3>
+                <p>Direct from Anthropic, OpenAI, Google AI, Microsoft AI. See announcements before tech press covers them.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⭐</div>
+                <h3>GitHub Trending</h3>
+                <p>Hot AI/ML repositories gaining traction. Discover projects before they go viral.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🚀</div>
+                <h3>Product Hunt</h3>
+                <p>Daily product launches and tools. See what builders are shipping today.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📡</div>
+                <h3>RSS Aggregation</h3>
+                <p>12+ curated feeds from TechCrunch, The Verge, Hacker News, and specialized tech blogs.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Organized by Source</h3>
+                <p>AI updates, products, repos, dev tools, and news—all categorized for quick scanning.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔗</div>
+                <h3>Primary Sources Only</h3>
+                <p>Every link goes to the original source. No secondary coverage, no paraphrasing.</p>
+            </div>
+        </div>
+
+        <div class="archive-section">
+            <h2>📚 Recent Summaries</h2>
+            <div class="archive-grid" id="archive-list">
+                <!-- Archive links will be dynamically populated -->
+                <a href="./output/latest.html" class="archive-card">
+                    <div class="archive-date">Latest Summary</div>
+                    <div class="archive-preview">View today's comprehensive tech news digest with 20 top stories, analysis, and action items.</div>
+                </a>
+            </div>
+        </div>
+
+        <div class="sources-section">
+            <h2>📡 Sources We Monitor</h2>
+            <div class="sources-grid">
+                <div class="source-category">
+                    <h3>🤖 AI Companies</h3>
+                    <ul>
+                        <li>Anthropic Blog</li>
+                        <li>OpenAI Blog</li>
+                        <li>Google AI Blog</li>
+                        <li>Microsoft AI Blog</li>
+                        <li>Hugging Face</li>
+                    </ul>
+                </div>
+                <div class="source-category">
+                    <h3>⭐ Platforms</h3>
+                    <ul>
+                        <li>GitHub Trending</li>
+                        <li>Product Hunt</li>
+                        <li>Hacker News</li>
+                        <li>GitHub Blog</li>
+                    </ul>
+                </div>
+                <div class="source-category">
+                    <h3>📰 Tech Media</h3>
+                    <ul>
+                        <li>TechCrunch AI</li>
+                        <li>The Verge</li>
+                        <li>Ars Technica</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Generated with <a href="https://www.perplexity.ai" target="_blank">Perplexity AI</a> • Hosted on <a href="https://pages.github.com" target="_blank">GitHub Pages</a></p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">Open source news aggregator • <a href="https://github.com/YOUR_USERNAME/news-agent" target="_blank">View on GitHub</a></p>
+        </footer>
+    </div>
+
+    <script>
+        // Dynamically populate archive links (will be populated by GitHub Actions)
+        // For now, just showing the latest
+        const archiveList = document.getElementById('archive-list');
+        
+        // You can add more archive cards here or populate dynamically
+        // This is a placeholder - we'll improve this with the full implementation
+    </script>
+</body>
+</html>
