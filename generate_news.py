@@ -279,7 +279,7 @@ OUTPUT: Only the complete HTML file, starting with <!DOCTYPE html>"""
                 "Content-Type": "application/json"
             },
             json={
-                "model": "llama-3.1-sonar-large-128k-online",  # Upgraded model
+                "model": "sonar-pro",  # Updated model name (replaces llama-3.1-sonar-large-128k-online)
                 "messages": [
                     {
                         "role": "system",
