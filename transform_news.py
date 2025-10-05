@@ -269,10 +269,4 @@ def main():
     print("🎉 Done!")
 
 if __name__ == "__main__":
-    # First, need to save the original output with a different name
-    if os.path.exists('output/latest.html'):
-        # Backup original
-        timestamp = datetime.now().strftime("%Y-%m-%d-%H%M%S")
-        os.rename('output/latest.html', f'output/original-{timestamp}.html')
-    
     main()
