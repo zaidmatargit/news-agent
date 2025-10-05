@@ -52,7 +52,7 @@ jobs:
         run: |
           git config user.name "News Agent Bot"
           git config user.email "actions@github.com"
-          git add output/*.html archive.json index.html
+          git add output/*.html index.html
           [ -f archive.json ] && git add archive.json || echo "archive.json not found"
           git commit -m "📰 Daily news summary - $(date +'%Y-%m-%d %H:%M UTC')" || echo "No changes to commit"
           git push
