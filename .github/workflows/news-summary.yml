@@ -35,7 +35,7 @@ jobs:
       
       - name: Generate news summary
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
         run: |
           python generate_news.py
       
