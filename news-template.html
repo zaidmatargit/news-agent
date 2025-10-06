@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Personalized Tech News - {{DATE}}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0e1a;
+            --bg-secondary: #131829;
+            --bg-card: #1a1f35;
+            --bg-card-hover: #212842;
+            --border: #2a3148;
+            --text-primary: #e8eaef;
+            --text-secondary: #a0a8c0;
+            --text-tertiary: #6b7594;
+            --accent-blue: #4f7cff;
+            --accent-purple: #8b5cf6;
+            --accent-pink: #ec4899;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --gradient: linear-gradient(135deg, #4f7cff 0%, #8b5cf6 50%, #ec4899 100%);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 2rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+            background: rgba(19, 24, 41, 0.95);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .header-meta {
+            display: flex;
+            gap: 2rem;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+        }
+
+        .header-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Smart Digest */
+        .digest {
+            background: linear-gradient(135deg, rgba(79, 124, 255, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .digest::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient);
+        }
+
+        .digest-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .digest-icon {
+            font-size: 1.75rem;
+        }
+
+        .digest h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .tldr {
+            background: rgba(79, 124, 255, 0.15);
+            border-left: 3px solid var(--accent-blue);
+            padding: 1.25rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            line-height: 1.7;
+        }
+
+        .digest-section {
+            margin-bottom: 1.75rem;
+        }
+
+        .digest-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .digest-section h3 {
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--accent-blue);
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+
+        .digest-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .digest-list li {
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .digest-list li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--accent-blue);
+            font-weight: bold;
+        }
+
+        .bottom-line {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 3px solid var(--accent-green);
+            padding: 1.25rem;
+            border-radius: 8px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Stories Section */
+        .section-header {
+            margin-bottom: 2rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .stories-grid {
+            display: grid;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .story-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.75rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .story-card:hover {
+            background: var(--bg-card-hover);
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(79, 124, 255, 0.15);
+        }
+
+        .story-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .story-meta {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .relevance-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background: rgba(79, 124, 255, 0.15);
+            color: var(--accent-blue);
+            border: 1px solid rgba(79, 124, 255, 0.3);
+        }
+
+        .relevance-badge.high {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .relevance-badge.medium {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-orange);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+
+        .category-badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            background: var(--bg-secondary);
+            color: var(--text-tertiary);
+            border: 1px solid var(--border);
+        }
+
+        .story-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            line-height: 1.4;
+        }
+
+        .story-title a {
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .story-title a:hover {
+            color: var(--accent-blue);
+        }
+
+        .story-summary {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .why-relevant {
+            background: rgba(139, 92, 246, 0.1);
+            border-left: 3px solid var(--accent-purple);
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+
+        .why-relevant-label {
+            font-size: 0.85rem;
+            color: var(--accent-purple);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .why-relevant-text {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .story-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            color: var(--text-tertiary);
+            font-size: 0.85rem;
+        }
+
+        .source-link {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .source-link:hover {
+            color: var(--accent-purple);
+        }
+
+        /* Actions Section */
+        .actions {
+            margin-top: 4rem;
+        }
+
+        .actions-grid {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .action-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.75rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .action-card:hover {
+            background: var(--bg-card-hover);
+            transform: translateY(-2px);
+        }
+
+        .action-card.high {
+            border-left: 4px solid var(--accent-green);
+        }
+
+        .action-card.medium {
+            border-left: 4px solid var(--accent-orange);
+        }
+
+        .action-card.low {
+            border-left: 4px solid var(--text-tertiary);
+        }
+
+        .action-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .action-type {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.4rem 0.9rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .action-type.opportunity {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+        }
+
+        .action-type.learn {
+            background: rgba(79, 124, 255, 0.15);
+            color: var(--accent-blue);
+        }
+
+        .action-type.build {
+            background: rgba(139, 92, 246, 0.15);
+            color: var(--accent-purple);
+        }
+
+        .action-type.network {
+            background: rgba(236, 72, 153, 0.15);
+            color: var(--accent-pink);
+        }
+
+        .action-type.watch {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--accent-orange);
+        }
+
+        .action-meta {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .priority-badge, .time-badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid;
+        }
+
+        .priority-badge.high {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-green);
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+
+        .priority-badge.medium {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--accent-orange);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+
+        .priority-badge.low {
+            background: rgba(107, 117, 148, 0.1);
+            color: var(--text-tertiary);
+            border-color: var(--border);
+        }
+
+        .time-badge {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border-color: var(--border);
+        }
+
+        .action-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            color: var(--text-primary);
+        }
+
+        .action-description {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .action-why-now {
+            background: rgba(79, 124, 255, 0.1);
+            padding: 0.9rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+
+        .action-why-now-label {
+            font-size: 0.85rem;
+            color: var(--accent-blue);
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+
+        .action-why-now-text {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .action-related {
+            font-size: 0.85rem;
+            color: var(--text-tertiary);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-tertiary);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 2rem 1rem;
+            }
+
+            .header-content {
+                padding: 0 1rem;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .digest {
+                padding: 1.5rem;
+            }
+
+            .story-card, .action-card {
+                padding: 1.25rem;
+            }
+
+            .story-header, .action-header {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-content">
+            <h1>📰 Your Personalized Tech News</h1>
+            <div class="header-meta">
+                <div class="header-meta-item">
+                    <span>📅</span>
+                    <span>{{DATE}}</span>
+                </div>
+                <div class="header-meta-item">
+                    <span>📊</span>
+                    <span>{{STORY_COUNT}} curated stories</span>
+                </div>
+                <div class="header-meta-item">
+                    <span>⚡</span>
+                    <span>{{ACTION_COUNT}} action items</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Smart Digest -->
+        <div class="digest">
+            <div class="digest-header">
+                <span class="digest-icon">🧠</span>
+                <h2>Smart Digest</h2>
+            </div>
+
+            <div class="tldr">
+                {{TLDR}}
+            </div>
+
+            <div class="digest-section">
+                <h3>🔍 Key Patterns</h3>
+                <ul class="digest-list">
+                    {{PATTERNS}}
+                </ul>
+            </div>
+
+            <div class="digest-section">
+                <h3>📈 Emerging Signals</h3>
+                <ul class="digest-list">
+                    {{SIGNALS}}
+                </ul>
+            </div>
+
+            <div class="bottom-line">
+                <strong>Bottom Line:</strong> {{BOTTOM_LINE}}
+            </div>
+        </div>
+
+        <!-- Stories -->
+        <div class="section-header">
+            <h2>📰 Your Top Stories</h2>
+            <p>{{STORY_COUNT}} stories selected and ranked by relevance to your projects and interests</p>
+        </div>
+
+        <div class="stories-grid">
+            {{STORIES}}
+        </div>
+
+        <!-- Actions -->
+        <div class="actions">
+            <div class="section-header">
+                <h2>⚡ Today's Action Items</h2>
+                <p>Specific things you can do today based on the news</p>
+            </div>
+
+            <div class="actions-grid">
+                {{ACTIONS}}
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Generated by your personalized news agent • Updated daily at 7 AM UTC</p>
+        </div>
+    </div>
+</body>
+</html>
