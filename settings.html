@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Tech News Daily</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --border: #334155;
+            --text-primary: #e5e7eb;
+            --text-secondary: #94a3b8;
+            --accent: #60a5fa;
+            --success: #10b981;
+            --error: #ef4444;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--text-secondary);
+        }
+
+        .back-link {
+            display: inline-block;
+            color: var(--accent);
+            text-decoration: none;
+            margin-bottom: 20px;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #93c5fd;
+        }
+
+        .form-section {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+
+        .form-section h2 {
+            color: var(--accent);
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .form-section p {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .hint {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        .tag-input-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .tag {
+            background: var(--accent);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tag button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1.2rem;
+            line-height: 1;
+            padding: 0;
+        }
+
+        .add-tag-btn {
+            background: var(--bg-dark);
+            border: 1px dashed var(--border);
+            color: var(--text-secondary);
+            padding: 6px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .add-tag-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        button[type="submit"] {
+            flex: 1;
+            padding: 14px 30px;
+            background: var(--primary-gradient);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+        }
+
+        .reset-btn {
+            padding: 14px 30px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            border-color: var(--error);
+            color: var(--error);
+        }
+
+        .status-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .status-message.success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+
+        .status-message.error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--error);
+            color: var(--error);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Back to Home</a>
+        
+        <div class="header">
+            <h1>⚙️ Settings</h1>
+            <p>Personalize your news digest</p>
+        </div>
+
+        <div class="status-message" id="status-message"></div>
+        <div class="loading" id="loading">Loading your settings...</div>
+
+        <form id="settings-form">
+            <!-- Projects -->
+            <div class="form-section">
+                <h2>📁 Your Projects</h2>
+                <p>What are you currently building or working on?</p>
+                <div class="form-group">
+                    <label for="projects">Projects (one per line)</label>
+                    <textarea id="projects" name="projects" placeholder="AI news aggregator&#10;E-commerce dashboard&#10;Mobile app for fitness tracking"></textarea>
+                    <div class="hint">News will be filtered based on relevance to these projects</div>
+                </div>
+            </div>
+
+            <!-- Learning -->
+            <div class="form-section">
+                <h2>📚 What You're Learning</h2>
+                <p>Technologies, frameworks, or skills you're currently learning</p>
+                <div class="form-group">
+                    <label for="learning">Learning (one per line)</label>
+                    <textarea id="learning" name="learning" placeholder="React&#10;Claude API&#10;LangChain&#10;PostgreSQL"></textarea>
+                    <div class="hint">Stories about these technologies will be prioritized</div>
+                </div>
+            </div>
+
+            <!-- Companies to Track -->
+            <div class="form-section">
+                <h2>🏢 Companies to Track</h2>
+                <p>Which companies do you want to monitor?</p>
+                <div class="form-group">
+                    <label for="companies">Companies (one per line)</label>
+                    <textarea id="companies" name="companies" placeholder="OpenAI&#10;Anthropic&#10;Vercel&#10;Supabase"></textarea>
+                    <div class="hint">Get alerts when these companies make announcements</div>
+                </div>
+            </div>
+
+            <!-- Role -->
+            <div class="form-section">
+                <h2>👤 Your Role</h2>
+                <p>What best describes you?</p>
+                <div class="form-group">
+                    <label for="role">Role</label>
+                    <select id="role" name="role">
+                        <option value="Developer">Developer</option>
+                        <option value="Founder">Founder / Entrepreneur</option>
+                        <option value="Designer">Designer</option>
+                        <option value="Product Manager">Product Manager</option>
+                        <option value="Researcher">Researcher</option>
+                        <option value="Student">Student</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <div class="hint">Helps tailor insights to your perspective</div>
+                </div>
+            </div>
+
+            <!-- Interests -->
+            <div class="form-section">
+                <h2>🎯 General Interests</h2>
+                <p>Broader topics you care about</p>
+                <div class="form-group">
+                    <label for="interests">Interests (one per line)</label>
+                    <textarea id="interests" name="interests" placeholder="AI/ML&#10;Web3&#10;Climate tech&#10;Developer tools&#10;Startups"></textarea>
+                    <div class="hint">Optional - helps discover adjacent topics</div>
+                </div>
+            </div>
+
+            <!-- API Configuration -->
+            <div class="form-section">
+                <h2>🔑 API Configuration</h2>
+                <p>Your Cloudflare Worker endpoint</p>
+                <div class="form-group">
+                    <label for="api-endpoint">API Endpoint</label>
+                    <input type="text" id="api-endpoint" name="api-endpoint" placeholder="https://your-worker.workers.dev">
+                    <div class="hint">Get this from your Cloudflare dashboard</div>
+                </div>
+                <div class="form-group">
+                    <label for="api-key">API Key</label>
+                    <input type="text" id="api-key" name="api-key" placeholder="your-api-key">
+                    <div class="hint">Set this in your Cloudflare Worker environment variables</div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="reset-btn" onclick="resetForm()">Reset to Defaults</button>
+                <button type="submit">Save Settings</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const API_ENDPOINT = localStorage.getItem('api_endpoint') || '';
+        const API_KEY = localStorage.getItem('api_key') || '';
+
+        // Load settings on page load
+        document.addEventListener('DOMContentLoaded', loadSettings);
+
+        async function loadSettings() {
+            document.getElementById('loading').style.display = 'block';
+
+            // Load API config from localStorage
+            document.getElementById('api-endpoint').value = API_ENDPOINT;
+            document.getElementById('api-key').value = API_KEY;
+
+            if (!API_ENDPOINT || !API_KEY) {
+                document.getElementById('loading').style.display = 'none';
+                showMessage('Please configure your API endpoint and key first', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_ENDPOINT}/config`, {
+                    headers: {
+                        'Authorization': `Bearer ${API_KEY}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to load settings');
+                }
+
+                const config = await response.json();
+                
+                // Populate form
+                document.getElementById('projects').value = (config.projects || []).join('\n');
+                document.getElementById('learning').value = (config.learning || []).join('\n');
+                document.getElementById('companies').value = (config.tracking_companies || []).join('\n');
+                document.getElementById('role').value = config.role || 'Developer';
+                document.getElementById('interests').value = (config.interests || []).join('\n');
+
+                document.getElementById('loading').style.display = 'none';
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                showMessage('Could not load settings. Using defaults.', 'error');
+                console.error(error);
+            }
+        }
+
+        // Save settings
+        document.getElementById('settings-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const endpoint = document.getElementById('api-endpoint').value.trim();
+            const key = document.getElementById('api-key').value.trim();
+
+            if (!endpoint || !key) {
+                showMessage('Please provide API endpoint and key', 'error');
+                return;
+            }
+
+            // Save API config to localStorage
+            localStorage.setItem('api_endpoint', endpoint);
+            localStorage.setItem('api_key', key);
+
+            const config = {
+                projects: document.getElementById('projects').value.split('\n').filter(x => x.trim()),
+                learning: document.getElementById('learning').value.split('\n').filter(x => x.trim()),
+                tracking_companies: document.getElementById('companies').value.split('\n').filter(x => x.trim()),
+                role: document.getElementById('role').value,
+                interests: document.getElementById('interests').value.split('\n').filter(x => x.trim())
+            };
+
+            try {
+                const response = await fetch(`${endpoint}/config`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${key}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(config)
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to save settings');
+                }
+
+                showMessage('Settings saved successfully!', 'success');
+            } catch (error) {
+                showMessage('Failed to save settings. Please check your API configuration.', 'error');
+                console.error(error);
+            }
+        });
+
+        function resetForm() {
+            if (confirm('Are you sure you want to reset to default settings?')) {
+                document.getElementById('projects').value = '';
+                document.getElementById('learning').value = '';
+                document.getElementById('companies').value = '';
+                document.getElementById('role').value = 'Developer';
+                document.getElementById('interests').value = '';
+                showMessage('Form reset to defaults. Click Save to apply.', 'success');
+            }
+        }
+
+        function showMessage(text, type) {
+            const msg = document.getElementById('status-message');
+            msg.textContent = text;
+            msg.className = `status-message ${type}`;
+            msg.style.display = 'block';
+            
+            setTimeout(() => {
+                msg.style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

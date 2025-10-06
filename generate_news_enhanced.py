@@ -1,8 +1,44 @@
 import os
 import requests
 import feedparser
+import json
 from datetime import datetime, timedelta
 from collections import defaultdict
+
+def fetch_user_config():
+    """Fetch user configuration from Cloudflare Worker"""
+    api_endpoint = os.environ.get('CONFIG_API_ENDPOINT')
+    api_key = os.environ.get('CONFIG_API_KEY')
+    
+    if not api_endpoint or not api_key:
+        print("⚠️  No config API set, using defaults")
+        return {
+            'projects': [],
+            'learning': [],
+            'tracking_companies': [],
+            'role': 'Developer',
+            'interests': []
+        }
+    
+    try:
+        response = requests.get(
+            f"{api_endpoint}/config",
+            headers={'Authorization': f'Bearer {api_key}'},
+            timeout=10
+        )
+        response.raise_for_status()
+        config = response.json()
+        print(f"✅ Loaded user config: {len(config.get('projects', []))} projects, {len(config.get('learning', []))} learning topics")
+        return config
+    except Exception as e:
+        print(f"⚠️  Could not fetch config: {e}")
+        return {
+            'projects': [],
+            'learning': [],
+            'tracking_companies': [],
+            'role': 'Developer',
+            'interests': []
+        }
 
 def fetch_rss_feed(url, source_name):
     """Fetch and parse RSS feed"""
@@ -10,16 +46,15 @@ def fetch_rss_feed(url, source_name):
         feed = feedparser.parse(url)
         items = []
         
-        cutoff_date = datetime.now() - timedelta(hours=48)  # Last 48 hours
+        cutoff_date = datetime.now() - timedelta(hours=48)
         
-        for entry in feed.entries[:10]:  # Get latest 10
+        for entry in feed.entries[:10]:
             pub_date = None
             if hasattr(entry, 'published_parsed'):
                 pub_date = datetime(*entry.published_parsed[:6])
             elif hasattr(entry, 'updated_parsed'):
                 pub_date = datetime(*entry.updated_parsed[:6])
             
-            # Only include recent items
             if pub_date and pub_date > cutoff_date:
                 items.append({
                     'title': entry.title,
@@ -37,7 +72,6 @@ def fetch_rss_feed(url, source_name):
 def fetch_github_trending():
     """Fetch trending AI repos from GitHub"""
     try:
-        # GitHub search API - trending AI repos from last week
         query = "ai OR machine-learning OR llm created:>{}".format(
             (datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d')
         )
@@ -70,72 +104,12 @@ def fetch_github_trending():
         print(f"Error fetching GitHub trending: {e}")
         return []
 
-def fetch_product_hunt():
-    """Fetch Product Hunt posts (requires API key)"""
-    api_key = os.environ.get('PRODUCTHUNT_API_KEY')
-    if not api_key:
-        print("Product Hunt API key not set, skipping...")
-        return []
-    
-    try:
-        # Product Hunt GraphQL API
-        query = """
-        {
-          posts(first: 10, order: VOTES) {
-            edges {
-              node {
-                name
-                tagline
-                votesCount
-                url
-                topics {
-                  edges {
-                    node {
-                      name
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-        """
-        
-        response = requests.post(
-            "https://api.producthunt.com/v2/api/graphql",
-            json={'query': query},
-            headers={
-                'Authorization': f'Bearer {api_key}',
-                'Content-Type': 'application/json'
-            }
-        )
-        
-        products = []
-        if response.status_code == 200:
-            data = response.json()
-            for edge in data['data']['posts']['edges']:
-                node = edge['node']
-                products.append({
-                    'title': node['name'],
-                    'link': node['url'],
-                    'summary': node['tagline'],
-                    'votes': node['votesCount'],
-                    'source': 'Product Hunt'
-                })
-        
-        return products
-    except Exception as e:
-        print(f"Error fetching Product Hunt: {e}")
-        return []
-
 def aggregate_all_sources():
     """Aggregate content from all sources"""
-    
     print("Fetching from multiple sources...")
     
     all_items = defaultdict(list)
     
-    # RSS Feeds to monitor
     rss_sources = {
         'Anthropic Blog': 'https://www.anthropic.com/news',
         'OpenAI Blog': 'https://openai.com/blog/rss.xml',
@@ -144,12 +118,9 @@ def aggregate_all_sources():
         'Hugging Face': 'https://huggingface.co/blog/feed.xml',
         'TechCrunch AI': 'https://techcrunch.com/category/artificial-intelligence/feed/',
         'The Verge': 'https://www.theverge.com/rss/index.xml',
-        'Ars Technica': 'http://feeds.arstechnica.com/arstechnica/index',
         'GitHub Blog': 'https://github.blog/feed/',
-        'Hacker News': 'https://hnrss.org/frontpage',
     }
     
-    # Fetch RSS feeds
     for name, url in rss_sources.items():
         print(f"  Fetching {name}...")
         items = fetch_rss_feed(url, name)
@@ -157,19 +128,11 @@ def aggregate_all_sources():
             all_items['rss'].extend(items)
             print(f"    Found {len(items)} items")
     
-    # Fetch GitHub trending
     print("  Fetching GitHub trending...")
     github_items = fetch_github_trending()
     if github_items:
         all_items['github'].extend(github_items)
         print(f"    Found {len(github_items)} repos")
-    
-    # Fetch Product Hunt
-    print("  Fetching Product Hunt...")
-    ph_items = fetch_product_hunt()
-    if ph_items:
-        all_items['product_hunt'].extend(ph_items)
-        print(f"    Found {len(ph_items)} products")
     
     return all_items
 
@@ -179,41 +142,28 @@ def categorize_items(all_items):
         'AI Companies': [],
         'Developer Tools': [],
         'GitHub Trending': [],
-        'Product Launches': [],
         'General Tech News': []
     }
     
-    # Categorize based on source and content
     for item_type, items in all_items.items():
         for item in items:
             source = item.get('source', '')
             title = item.get('title', '').lower()
             summary = item.get('summary', '').lower()
             
-            # AI company blogs
             if any(x in source for x in ['Anthropic', 'OpenAI', 'Google AI', 'Microsoft AI', 'Hugging Face']):
                 categories['AI Companies'].append(item)
-            
-            # GitHub repos
             elif source == 'GitHub Trending':
                 categories['GitHub Trending'].append(item)
-            
-            # Product Hunt
-            elif source == 'Product Hunt':
-                categories['Product Launches'].append(item)
-            
-            # Developer tools
             elif any(x in title + summary for x in ['vscode', 'cursor', 'github', 'copilot', 'ide', 'developer']):
                 categories['Developer Tools'].append(item)
-            
-            # Everything else
             else:
                 categories['General Tech News'].append(item)
     
     return categories
 
-def generate_summary_with_perplexity(categorized_items):
-    """Use Perplexity to enhance and summarize the collected items"""
+def generate_enhanced_summary(categorized_items, user_config):
+    """Generate enhanced summary with 3 layers using Claude"""
     
     perplexity_api_key = os.environ.get("PERPLEXITY_API_KEY")
     if not perplexity_api_key:
@@ -221,55 +171,148 @@ def generate_summary_with_perplexity(categorized_items):
     
     current_date = datetime.now().strftime("%B %d, %Y")
     
-    # Build context from collected items
+    # Build context
     context = "Here are news items collected from various sources:\n\n"
-    
     for category, items in categorized_items.items():
         if items:
             context += f"\n## {category}:\n"
-            for item in items[:5]:  # Top 5 per category
+            for item in items[:5]:
                 context += f"- {item['title']}\n"
                 context += f"  Link: {item['link']}\n"
                 context += f"  Source: {item['source']}\n\n"
     
+    # Build user context
+    user_context = f"""
+USER PROFILE:
+- Role: {user_config.get('role', 'Developer')}
+- Projects: {', '.join(user_config.get('projects', [])) or 'None specified'}
+- Learning: {', '.join(user_config.get('learning', [])) or 'None specified'}
+- Tracking Companies: {', '.join(user_config.get('tracking_companies', [])) or 'None specified'}
+- Interests: {', '.join(user_config.get('interests', [])) or 'None specified'}
+"""
+    
     prompt = f"""{context}
 
-Based on the above collected items, create a comprehensive HTML tech news digest for {current_date}.
+{user_context}
 
-Your task:
-1. Use the provided items as your primary sources
-2. Add context and analysis using web search for items that need more detail
-3. Organize into a beautiful HTML page with 20 stories total
+Create a comprehensive, personalized HTML news digest for {current_date} with THREE LAYERS:
 
-REQUIRED SECTIONS:
+**LAYER 1: SMART DIGEST** (Executive Summary Section)
+Analyze all collected stories and create:
+1. **TL;DR** - One powerful sentence capturing the day's theme
+2. **Key Patterns** - What connections exist between stories? (3-4 patterns)
+3. **Emerging Signals** - What's trending up? What's noteworthy? (2-3 signals)
+4. **Bottom Line** - What does this mean for {user_config.get('role', 'developers')}? (2-3 sentences)
 
-1. **AI Company Updates** (5 stories)
-   - Use items from Anthropic, OpenAI, Google AI, Microsoft AI, Hugging Face blogs
-   - Each story should include the actual blog post link
-   
-2. **Product Launches** (3 stories)
-   - Use Product Hunt items and any new product announcements
-   
-3. **GitHub Trending** (4 repos)
-   - Feature the trending AI/ML repos
-   - Include stars, description, link to repo
-   
-4. **Developer Tools** (3 stories)
-   - IDEs, coding assistants, dev platforms
-   
-5. **General Tech News** (5 stories)
-   - Major industry developments, funding, acquisitions
+**LAYER 2: PERSONALIZATION** (Story Scoring & Filtering)
+For each story, score its relevance to the user's profile (0-10):
+- Does it relate to their projects?
+- Does it involve technologies they're learning?
+- Does it mention companies they're tracking?
+- Does it align with their interests?
 
-For each story:
-- Use the ACTUAL links provided above
-- Add context from web search if needed
-- Write 2-3 paragraphs with analysis
-- Include "Why It Matters"
-- Add 3 key takeaways
+Select the TOP 12-15 MOST RELEVANT stories only. For each, include:
+- **Relevance Score** (shown to user)
+- **Why This Matters to YOU** - specific to user's profile
+- Standard story details (title, summary, source, etc.)
 
-HTML Design: Dark mode, gradient header, card layout, mobile responsive.
+**LAYER 3: ACTION ITEMS** (Actionable Insights Section)
+Based on the news AND user profile, generate 3-5 specific actions:
 
-OUTPUT: Only the complete HTML file, starting with <!DOCTYPE html>"""
+Each action must have:
+- **Type**: OPPORTUNITY | LEARN | BUILD | NETWORK | WATCH
+- **Priority**: HIGH | MEDIUM | LOW
+- **Action**: One clear, specific thing to do
+- **Why Now**: Why this is timely/urgent
+- **Time Estimate**: How long it will take
+- **Related Stories**: Which news items prompted this
+
+HTML STRUCTURE:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Personalized Tech News - {current_date}</title>
+  <style>
+    /* Use the same dark theme from news-viewer-template.html */
+    /* Add special styling for:
+       - .smart-digest section
+       - .relevance-score badges
+       - .action-items section with priority colors
+    */
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Your Personalized Tech News</h1>
+    <p>{current_date}</p>
+  </header>
+
+  <!-- LAYER 1: Smart Digest -->
+  <section class="smart-digest">
+    <h2>🧠 Smart Digest</h2>
+    <div class="tldr">...</div>
+    <div class="patterns">...</div>
+    <div class="signals">...</div>
+    <div class="bottom-line">...</div>
+  </section>
+
+  <!-- LAYER 2: Personalized Stories -->
+  <section class="personalized-stories">
+    <h2>📰 Your Top Stories (15 selected from 30+)</h2>
+    
+    <div class="story-card" data-relevance="9">
+      <div class="relevance-badge">Relevance: 9/10</div>
+      <h3>Story Title</h3>
+      <a href="...">Source</a>
+      <p>Summary...</p>
+      <div class="why-matters-to-you">
+        <strong>Why This Matters to You:</strong>
+        This relates to your project [X] and you're learning [Y]...
+      </div>
+    </div>
+    <!-- More stories... -->
+  </section>
+
+  <!-- LAYER 3: Action Items -->
+  <section class="action-items">
+    <h2>⚡ Today's Action Items</h2>
+    
+    <div class="action-card high-priority">
+      <div class="action-type">🎯 OPPORTUNITY</div>
+      <h3>Action Title</h3>
+      <p class="action-description">Specific action...</p>
+      <div class="action-meta">
+        <span class="priority">HIGH</span>
+        <span class="time">2 hours</span>
+      </div>
+      <div class="why-now">Why now: ...</div>
+      <div class="related">Related: Story #1, Story #3</div>
+    </div>
+    <!-- More actions... -->
+  </section>
+
+  <!-- LAYER 2: All Stories by Category (for reference) -->
+  <section class="all-stories">
+    <h2>📚 Full Story List</h2>
+    <!-- Organized by category like before -->
+  </section>
+</body>
+</html>
+```
+
+CRITICAL REQUIREMENTS:
+1. Response must be ONLY the HTML - no explanations
+2. Personalize everything to the user's profile
+3. Be specific in "Why This Matters to You" sections
+4. Action items must be actionable (not "keep watching")
+5. Use actual story data, not placeholders
+6. Relevance scores must be justified
+7. Smart Digest must find real patterns in the data
+
+Begin generating the HTML now."""
 
     try:
         response = requests.post(
@@ -279,11 +322,11 @@ OUTPUT: Only the complete HTML file, starting with <!DOCTYPE html>"""
                 "Content-Type": "application/json"
             },
             json={
-                "model": "sonar-pro",  # Updated model name (replaces llama-3.1-sonar-large-128k-online)
+                "model": "sonar-pro",
                 "messages": [
                     {
                         "role": "system",
-                        "content": "You are a tech news editor creating daily digests from collected sources."
+                        "content": "You are an expert news analyst creating personalized, actionable insights."
                     },
                     {
                         "role": "user",
@@ -291,7 +334,7 @@ OUTPUT: Only the complete HTML file, starting with <!DOCTYPE html>"""
                     }
                 ],
                 "temperature": 0.3,
-                "max_tokens": 10000
+                "max_tokens": 12000
             }
         )
         
@@ -317,23 +360,26 @@ OUTPUT: Only the complete HTML file, starting with <!DOCTYPE html>"""
 
 def main():
     """Main execution"""
-    print("Starting multi-source news aggregation...")
+    print("Starting personalized news generation with 3 layers...")
     
-    # Step 1: Collect from all sources
+    # Fetch user config
+    user_config = fetch_user_config()
+    
+    # Collect from all sources
     all_items = aggregate_all_sources()
     
-    # Step 2: Categorize
+    # Categorize
     categorized = categorize_items(all_items)
     
     print("\nCollected items by category:")
     for category, items in categorized.items():
         print(f"  {category}: {len(items)} items")
     
-    # Step 3: Generate HTML with Perplexity
-    print("\nGenerating HTML summary with Perplexity...")
-    html_content = generate_summary_with_perplexity(categorized)
+    # Generate enhanced HTML
+    print("\nGenerating personalized digest with Claude...")
+    html_content = generate_enhanced_summary(categorized, user_config)
     
-    # Step 4: Save
+    # Save
     timestamp = datetime.now().strftime("%Y-%m-%d")
     filename = f"output/news-summary-{timestamp}.html"
     
@@ -343,8 +389,9 @@ def main():
     with open("output/latest.html", 'w', encoding='utf-8') as f:
         f.write(html_content)
     
-    print(f"\nSuccess! Generated {filename}")
-    print("Cost estimate: $0.02-0.08 (more sources = slightly higher)")
+    print(f"\n✅ Success! Generated {filename}")
+    print("📊 Includes: Smart Digest + Personalization + Action Items")
+    print("💰 Cost estimate: $0.10-0.20 (enhanced analysis)")
 
 if __name__ == "__main__":
     main()
