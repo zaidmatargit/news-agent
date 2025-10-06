@@ -32,6 +32,8 @@ jobs:
       - name: Generate news summary
         env:
           PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
+          CONFIG_API_ENDPOINT: ${{ secrets.CONFIG_API_ENDPOINT }}
+          CONFIG_API_KEY: ${{ secrets.CONFIG_API_KEY }}
         run: |
           python generate_news.py
       
