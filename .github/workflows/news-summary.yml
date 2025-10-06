@@ -29,13 +29,17 @@ jobs:
       - name: Create output directory
         run: mkdir -p output
       
-      - name: Generate news summary
+      - name: Generate JSON analysis
         env:
           PERPLEXITY_API_KEY: ${{ secrets.PERPLEXITY_API_KEY }}
           CONFIG_API_ENDPOINT: ${{ secrets.CONFIG_API_ENDPOINT }}
           CONFIG_API_KEY: ${{ secrets.CONFIG_API_KEY }}
         run: |
-          python generate_news.py
+          python generate_news_json.py
+          
+      - name: Render HTML from JSON
+        run: |
+          python render_news.py
 
       - name: Debug - List files
         run: |
