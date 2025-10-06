@@ -1,565 +1,354 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tech News Daily - Interactive Dashboard</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --primary-gradient: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
-            --bg-dark: #0f172a;
-            --bg-card: #1e293b;
-            --border: #334155;
-            --text-primary: #e5e7eb;
-            --text-secondary: #94a3b8;
-            --accent: #60a5fa;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-primary);
-            min-height: 100vh;
-        }
-
-        /* Header */
-        .header {
-            background: var(--primary-gradient);
-            padding: 40px 20px;
-            text-align: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-        }
-
-        .header h1 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: white;
-            margin-bottom: 8px;
-        }
-
-        .header .date {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1.1rem;
-        }
-
-        .header .back-link {
-            position: absolute;
-            left: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: white;
-            text-decoration: none;
-            font-size: 1.5rem;
-            transition: transform 0.3s ease;
-        }
-
-        .header .back-link:hover {
-            transform: translateY(-50%) scale(1.2);
-        }
-
-        /* Controls */
-        .controls {
-            background: var(--bg-card);
-            padding: 20px;
-            border-bottom: 1px solid var(--border);
-            position: sticky;
-            top: 120px;
-            z-index: 99;
-        }
-
-        .controls-inner {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .search-box {
-            flex: 1;
-            min-width: 250px;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 12px 20px;
-            background: var(--bg-dark);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            color: var(--text-primary);
-            font-size: 1rem;
-            transition: border-color 0.3s ease;
-        }
-
-        .search-box input:focus {
-            outline: none;
-            border-color: var(--accent);
-        }
-
-        .search-box input::placeholder {
-            color: var(--text-secondary);
-        }
-
-        .category-filters {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .filter-btn {
-            padding: 10px 20px;
-            background: var(--bg-dark);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            color: var(--text-secondary);
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .filter-btn:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-
-        .filter-btn.active {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: white;
-        }
-
-        .story-count {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            margin-left: auto;
-        }
-
-        /* Main Content */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-
-        .category-section {
-            margin-bottom: 60px;
-        }
-
-        .category-section.hidden {
-            display: none;
-        }
-
-        .category-header {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--border);
-        }
-
-        .category-icon {
-            font-size: 2rem;
-        }
-
-        .category-title {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--accent);
-        }
-
-        .category-count {
-            margin-left: auto;
-            background: var(--bg-card);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        /* Story Grid */
-        .story-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 25px;
-        }
-
-        .story-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 25px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .story-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--primary-gradient);
-            transform: scaleX(0);
-            transform-origin: left;
-            transition: transform 0.3s ease;
-        }
-
-        .story-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
-            border-color: var(--accent);
-        }
-
-        .story-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .story-card.hidden {
-            display: none;
-        }
-
-        .story-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--text-primary);
-            margin-bottom: 15px;
-            line-height: 1.4;
-        }
-
-        .story-link {
-            display: inline-block;
-            color: var(--accent);
-            text-decoration: none;
-            font-size: 0.85rem;
-            margin-bottom: 15px;
-            transition: color 0.3s ease;
-        }
-
-        .story-link:hover {
-            color: #93c5fd;
-            text-decoration: underline;
-        }
-
-        .story-content {
-            color: var(--text-secondary);
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-
-        .why-matters {
-            background: rgba(96, 165, 250, 0.1);
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            border-left: 3px solid var(--accent);
-        }
-
-        .why-matters h4 {
-            color: var(--accent);
-            font-size: 0.85rem;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .why-matters p {
-            font-style: italic;
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-
-        .takeaways {
-            margin-top: 15px;
-        }
-
-        .takeaways h4 {
-            color: #a78bfa;
-            font-size: 0.85rem;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .takeaways ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .takeaways li {
-            padding: 5px 0 5px 20px;
-            position: relative;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        .takeaways li::before {
-            content: "→";
-            position: absolute;
-            left: 0;
-            color: #a78bfa;
-            font-weight: bold;
-        }
-
-        /* No Results */
-        .no-results {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-secondary);
-        }
-
-        .no-results.hidden {
-            display: none;
-        }
-
-        .no-results h3 {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-        }
-
-        /* Mobile */
-        @media (max-width: 768px) {
-            .header h1 {
-                font-size: 1.8rem;
-            }
-
-            .header .back-link {
-                position: static;
-                transform: none;
-                display: block;
-                margin-bottom: 15px;
-            }
-
-            .controls-inner {
-                flex-direction: column;
-            }
-
-            .search-box {
-                width: 100%;
-            }
-
-            .story-count {
-                margin-left: 0;
-                width: 100%;
-            }
-
-            .story-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .category-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .category-count {
-                margin-left: 0;
-            }
-        }
-
-        /* Loading State */
-        .loading {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-secondary);
-        }
-
-        .loading.hidden {
-            display: none;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Personalized Tech News - October 06, 2025</title>
+  <style>
+    body {
+      background: #121212;
+      color: #e0e0e0;
+      font-family: 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 20px;
+    }
+    header {
+      margin-bottom: 30px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 10px;
+    }
+    h1, h2, h3 {
+      color: #f5f5f5;
+    }
+    h2 {
+      margin-top: 30px;
+      border-bottom: 1px solid #444;
+      padding-bottom: 8px;
+    }
+    .smart-digest {
+      background: #1e1e1e;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+    .tldr {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #bb86fc;
+    }
+    .patterns, .signals, .bottom-line {
+      margin-bottom: 15px;
+    }
+    .patterns ul, .signals ul {
+      padding-left: 20px;
+    }
+    .personalized-stories .story-card {
+      background: #1e1e1e;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border-left: 4px solid #bb86fc;
+    }
+    .relevance-badge {
+      display: inline-block;
+      background: #3700b3;
+      color: white;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 0.8em;
+      margin-bottom: 10px;
+    }
+    .why-matters-to-you {
+      background: #2d2d2d;
+      padding: 10px;
+      border-radius: 6px;
+      margin-top: 10px;
+      font-size: 0.95em;
+    }
+    .action-items .action-card {
+      background: #1e1e1e;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      border-left: 4px solid;
+    }
+    .action-card.high-priority {
+      border-left-color: #ff5252;
+    }
+    .action-card.medium-priority {
+      border-left-color: #ffab40;
+    }
+    .action-card.low-priority {
+      border-left-color: #69f0ae;
+    }
+    .action-type {
+      font-weight: bold;
+      color: #bb86fc;
+      margin-bottom: 5px;
+    }
+    .action-meta {
+      font-size: 0.9em;
+      color: #b0bec5;
+      margin-top: 5px;
+    }
+    .priority {
+      margin-right: 10px;
+    }
+    .all-stories {
+      margin-top: 40px;
+      opacity: 0.7;
+      font-size: 0.9em;
+    }
+    a {
+      color: #82b1ff;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
-    <header class="header">
-        <a href="../index.html" class="back-link">←</a>
-        <h1>Tech News Daily</h1>
-        <p class="date" id="news-date">Loading...</p>
-    </header>
+  <header>
+    <h1>Your Personalized Tech News</h1>
+    <p>October 06, 2025</p>
+  </header>
 
-    <div class="controls">
-        <div class="controls-inner">
-            <div class="search-box">
-                <input type="text" id="search-input" placeholder="Search stories...">
-            </div>
-            <div class="category-filters">
-                <button class="filter-btn active" data-category="all">All</button>
-                <button class="filter-btn" data-category="ai">🤖 AI</button>
-                <button class="filter-btn" data-category="products">🚀 Products</button>
-                <button class="filter-btn" data-category="github">⭐ GitHub</button>
-                <button class="filter-btn" data-category="dev">🔨 Dev Tools</button>
-                <button class="filter-btn" data-category="news">📰 News</button>
-            </div>
-            <div class="story-count" id="story-count">20 stories</div>
-        </div>
+  <!-- LAYER 1: Smart Digest -->
+  <section class="smart-digest">
+    <h2>🧠 Smart Digest</h2>
+    <div class="tldr">AI regulation reaches a tipping point as California sets the first U.S. state standard for AI safety and transparency, while Europe accelerates adoption and the tech industry races to balance innovation with compliance.</div>
+    <div class="patterns">
+      <ul>
+        <li><strong>Regulation & Innovation in Tension:</strong> California's new AI safety laws and Europe's push for AI adoption highlight a global pattern of governments stepping in to shape AI development, with compliance now a core part of the tech stack for companies like OpenAI, Anthropic, and Perplexity.</li>
+        <li><strong>Transparency as a Competitive Edge:</strong> Public disclosure of safety protocols, incident reporting, and opt-in copyright controls (e.g., Sora) are emerging as both regulatory requirements and user-facing features, directly impacting how AI products are built and marketed.</li>
+        <li><strong>Agentic & Automated AI Tools on the Rise:</strong> Trending GitHub repos (e.g., crypto-trader-bot-with-AI-algo, CrewAI-related projects) and news about AI automation in agriculture (Instacrops) signal growing interest in agentic, autonomous systems—a core area of your learning and projects.</li>
+        <li><strong>VC Focus on AI:</strong> The funding environment remains heavily skewed toward AI startups, reinforcing the strategic value of your AI Factory and news aggregator projects in a market where non-AI ventures struggle to attract capital.</li>
+      </ul>
+    </div>
+    <div class="signals">
+      <ul>
+        <li><strong>Up:</strong> AI safety regulation, transparency tooling, agentic automation, and VC interest in AI-native companies.</li>
+        <li><strong>Noteworthy:</strong> California's laws are likely to become a de facto national standard in the absence of federal action, creating both compliance challenges and opportunities for thought leadership in your AI news aggregator.</li>
+      </ul>
+    </div>
+    <div class="bottom-line">
+      <p>As a founder deeply invested in AI tools, automation, and news aggregation, you must now track regulatory developments as closely as technical ones—compliance is becoming a feature, not just a checkbox. The market is rewarding those who can navigate both the technical and policy landscapes, especially in agentic AI and automation. Your projects are well-positioned to lead in transparency and compliance tooling, but staying ahead requires proactive engagement with new laws and emerging best practices.</p>
+    </div>
+  </section>
+
+  <!-- LAYER 2: Personalized Stories -->
+  <section class="personalized-stories">
+    <h2>📰 Your Top Stories (15 selected from 30+)</h2>
+    
+    <div class="story-card" data-relevance="10">
+      <div class="relevance-badge">Relevance: 10/10</div>
+      <h3>California’s new AI safety law shows regulation and innovation don’t have to clash</h3>
+      <a href="https://techcrunch.com/2025/10/05/californias-new-ai-safety-law-shows-regulation-and-innovation-dont-have-to-clash/">TechCrunch AI</a>
+      <p>California Governor Gavin Newsom signed SB 53, the nation's first comprehensive AI safety law, requiring major developers to disclose safety protocols, implement incident reporting, and extend whistleblower protections—setting a template that may influence federal and global policy[1][3].</p>
+      <div class="why-matters-to-you">
+        <strong>Why This Matters to You:</strong>
+        Directly impacts your AI news aggregator and AI Factory projects, as compliance and transparency are now critical features for any AI product. You're tracking Anthropic and Perplexity, both affected by this law. Understanding these requirements is essential for your product roadmap and thought leadership.
+      </div>
     </div>
 
-    <div class="container">
-        <div class="loading" id="loading">
-            <h3>Loading news...</h3>
-        </div>
-
-        <div class="no-results hidden" id="no-results">
-            <h3>No stories found</h3>
-            <p>Try a different search term or filter</p>
-        </div>
-
-        <!-- AI Company Updates -->
-        <section class="category-section" id="category-ai" data-category="ai">
-            <div class="category-header">
-                <span class="category-icon">🤖</span>
-                <h2 class="category-title">AI Company Updates</h2>
-                <span class="category-count" data-count="ai">5 stories</span>
-            </div>
-            <div class="story-grid" id="ai-stories">
-
-            </div>
-        </section>
-
-        <!-- Product Launches -->
-        <section class="category-section" id="category-products" data-category="products">
-            <div class="category-header">
-                <span class="category-icon">🚀</span>
-                <h2 class="category-title">Product Launches</h2>
-                <span class="category-count" data-count="products">3 stories</span>
-            </div>
-            <div class="story-grid" id="products-stories">
-
-            </div>
-        </section>
-
-        <!-- GitHub Trending -->
-        <section class="category-section" id="category-github" data-category="github">
-            <div class="category-header">
-                <span class="category-icon">⭐</span>
-                <h2 class="category-title">GitHub Trending</h2>
-                <span class="category-count" data-count="github">4 repos</span>
-            </div>
-            <div class="story-grid" id="github-stories">
-
-            </div>
-        </section>
-
-        <!-- Developer Tools -->
-        <section class="category-section" id="category-dev" data-category="dev">
-            <div class="category-header">
-                <span class="category-icon">🔨</span>
-                <h2 class="category-title">Developer Tools</h2>
-                <span class="category-count" data-count="dev">3 stories</span>
-            </div>
-            <div class="story-grid" id="dev-stories">
-
-            </div>
-        </section>
-
-        <!-- General Tech News -->
-        <section class="category-section" id="category-news" data-category="news">
-            <div class="category-header">
-                <span class="category-icon">📰</span>
-                <h2 class="category-title">General Tech News</h2>
-                <span class="category-count" data-count="news">5 stories</span>
-            </div>
-            <div class="story-grid" id="news-stories">
-
-            </div>
-        </section>
+    <div class="story-card" data-relevance="9">
+      <div class="relevance-badge">Relevance: 9/10</div>
+      <h3>Accelerating AI adoption in Europe</h3>
+      <a href="https://openai.com/global-affairs/accelerating-ai-uptake-in-europe">OpenAI Blog</a>
+      <p>OpenAI outlines efforts to accelerate AI adoption across Europe, highlighting partnerships, policy engagement, and technical adaptations to meet regional regulatory and market needs.</p>
+      <div class="why-matters-to-you">
+        <strong>Why This Matters to You:</strong>
+        As a founder tracking OpenAI and building AI tools, Europe's regulatory landscape and adoption patterns are critical for global strategy. This informs your news aggregator's international coverage and potential product localization.
+      </div>
     </div>
 
-    <script>
-        // Parse the existing HTML and extract stories
-        function parseStoriesFromHTML() {
-            // This will be populated by the actual content
-            // For now, returning empty - will be filled by update script
-            return {
-                date: 'Sunday, October 05, 2025',
-                categories: {
-                    ai: [],
-                    products: [],
-                    github: [],
-                    dev: [],
-                    news: []
-                }
-            };
-        }
+    <div class="story-card" data-relevance="9">
+      <div class="relevance-badge">Relevance: 9/10</div>
+      <h3>Sam Altman says Sora will add ‘granular,’ opt-in copyright controls</h3>
+      <a href="https://techcrunch.com/2025/10/04/sam-altman-says-sora-will-add-granular-opt-in-copyright-controls/">TechCrunch AI</a>
+      <p>OpenAI's Sora video model will introduce detailed, user-controlled copyright settings, responding to creator and regulatory demands for greater transparency and control over AI-generated content.</p>
+      <div class="why-matters-to-you">
+        <strong>Why This Matters to You:</strong>
+        Copyright and transparency features are becoming key differentiators in AI tools—directly relevant to your AI Factory and news dashboard projects. Tracking OpenAI's approach helps you anticipate user expectations and regulatory trends.
+      </div>
+    </div>
 
-        // Initialize
-        let allStories = parseStoriesFromHTML();
-        let currentFilter = 'all';
-        let searchTerm = '';
+    <div class="story-card" data-relevance="8">
+      <div class="relevance-badge">Relevance: 8/10</div>
+      <h3>Sora provides better control over videos featuring your AI self</h3>
+      <a href="https://www.theverge.com/news/792638/sora-provides-better-control-over-videos-featuring-your-ai-self">The Verge</a>
+      <p>OpenAI's Sora now offers users more granular controls over videos that include their likeness, addressing growing concerns about deepfakes and digital identity.</p>
+      <div class="why-matters-to-you">
+        <strong>Why This Matters to You:</strong>
+        User control and privacy are central to ethical AI—topics you cover in your news aggregator and must consider in your own tools. This story is a signal of where the industry is heading on digital identity.
+      </div>
+    </div>
 
-        // Set date
-        document.getElementById('news-date').textContent = 'October 06, 2025';
+    <div class="story-card" data-relevance="8">
+      <div class="relevance-badge">Relevance: 8/10</div>
+      <h3>If you’re not an AI startup, good luck raising money from VCs</h3>
+      <a href="https://techcrunch.com/2025/10/04/if-youre-not-an-ai-startup-good-luck-raising-money-from-vcs/">TechCrunch AI</a>
+      <p>Venture capital remains heavily focused on AI startups, with non-AI companies finding it increasingly difficult to secure funding in the current market.</p>
+      <div class="why-matters-to-you">
+        <strong>Why This Matters to You:</strong>
+        Validates the strategic focus of your AI Factory and news aggregator projects. Also informs your fundraising and positioning strategy as a founder in the AI space.
+      </div>
+    </div>
 
-        // Category filtering
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentFilter = btn.dataset.category;
-                filterStories();
-            });
-        });
+    <div class="story-card" data-relevance="8">
+      <div class="relevance-badge">Relevance: 8/10</div>
+      <h3>California's New AI Laws: What Just Changed for Your Business</h3>
+      <a href="https://www.joneswalker.com/en/insights/blogs/ai-law-blog/californias-new-ai-laws-what-just-changed-for-your-business.html?id=102l7ea">Jones Walker</a>
+      <p>California enacted 18 new AI laws, including the Transparency in Frontier Artificial Intelligence Act (TFAIA), which mandates disclosure, incident reporting, and extends whistleblower protections for advanced AI developers[2].</p>
+      <div class="why-matters-to-you">
+        <strong>Why This Matters to You:</strong>
+        As a founder building AI tools and tracking compliance, you need to understand the full scope of these laws—not just the headline act. This affects your product design, vendor selection, and content strategy.
+      </div>
+    </div>
 
-        // Search
-        document.getElementById('search-input').addEventListener('input', (e) => {
-            searchTerm = e.target.value.toLowerCase();
-            filterStories();
-        });
+    <div class="story-card" data-relevance="7">
+      <div class="relevance-badge">Relevance: 7/10</div>
+      <h3>California's SB 53: The First Frontier AI Law, Explained</h3>
+      <a href="https://fpf.org/blog/californias-sb-53-the-first-frontier-ai-law-explained/">Future of Privacy Forum</a>
+      <p>SB 53 (TFAIA) specifically targets developers of the most advanced AI models, requiring governance frameworks, transparency reports, and a public computing cluster, with implications for innovation and compliance[3].</p>
+      <div class="why-matters-to-you">
+        <strong>Why This Matters to You:</strong>
+        Deepens your understanding of the regulatory landscape for frontier AI models—critical context for your news aggregator and any plans to work with or cover Anthropic, OpenAI, or Perplexity.
+      </div>
+    </div>
 
-        function filterStories() {
-            let visibleCount = 0;
+    <div class="story-card" data-relevance="7">
+      <div class="relevance-badge">Relevance: 7/10</div>
+      <h3>Instacrops will demo its water-saving, crop-boosting AI at TechCrunch Disrupt 2025</h3>
+      <a href="https://techcrunch.com/2025/10/04/instacrops-will-demo-its-water-saving-crop-boosting-ai-at-techcrunch-disrupt-2025/">TechCrunch AI</a>
+      <p>Instacrops is showcasing AI that optimizes agricultural water use and crop yields, highlighting the expansion of agentic AI into real-world, automated systems.</p>
+      <div class="why-matters-to-you">
+        <strong>Why This Matters to You:</strong>
+        Agentic and automated AI is a core learning area for you. This story signals where the industry is applying these technologies beyond chatbots, offering inspiration for your own projects.
+      </div>
+    </div>
 
-            // Show/hide category sections
-            document.querySelectorAll('.category-section').forEach(section => {
-                const category = section.dataset.category;
-                
-                if (currentFilter === 'all' || currentFilter === category) {
-                    section.classList.remove('hidden');
-                    
-                    // Filter stories within category by search term
-                    const stories = section.querySelectorAll('.story-card');
-                    stories.forEach(story => {
-                        const text = story.textContent.toLowerCase();
-                        if (searchTerm === '' || text.includes(searchTerm)) {
-                            story.classList.remove('hidden');
-                            visibleCount++;
-                        } else {
-                            story.classList.add('hidden');
-                        }
-                    });
-                } else {
-                    section.classList.add('hidden');
-                }
-            });
+    <div class="story-card" data-relevance="7">
+      <div class="relevance-badge">Relevance: 7/10</div>
+      <h3>OpenAI and Jony Ive may be struggling to figure out their AI device</h3>
+      <a href="https://techcrunch.com/2025/10/05/openai-and-jony-ive-may-be-struggling-to-figure-out-their-ai-device/">TechCrunch AI</a>
+      <p>OpenAI and designer Jony Ive are reportedly facing challenges in defining their rumored AI hardware product, underscoring the difficulties of moving AI from software to physical devices.</p>
+      <div class="why-matters-to-you">
+        <strong>Why This Matters to You:</strong>
+        As someone tracking OpenAI and interested in the future of AI interfaces, this offers insight into the challenges of productizing advanced AI—relevant to your own product development and news coverage.
+      </div>
+    </div>
 
-            // Update count
-            document.getElementById('story-count').textContent = `${visibleCount} ${visibleCount === 1 ? 'story' : 'stories'}`;
+    <div class="story-card" data-relevance="6">
+      <div class="relevance-badge">Relevance: 6/10</div>
+      <h3>The Reinforcement Gap — or why some AI skills improve faster than others</h3>
+      <a href="https://techcrunch.com/2025/10/05/the-reinforcement-gap-or-why-some-ai-skills-improve-faster-than-others/">TechCrunch AI</a>
+      <p>Analysis of why certain AI capabilities advance rapidly while others lag, with implications for research prioritization and product development.</p>
+      <div class="why-matters-to-you">
+        <strong>Why This Matters to You:</strong>
+        Informs your understanding of AI progress and helps you prioritize learning and project focus areas, especially in agentic and automated systems.
+      </div>
+    </div>
 
-            // Show/hide no results
-            if (visibleCount === 0) {
-                document.getElementById('no-results').classList.remove('hidden');
-            } else {
-                document.getElementById('no-results').classList.add('hidden');
-            }
-        }
+    <div class="story-card" data-relevance="6">
+      <div class="relevance-badge">Relevance: 6/10</div>
+      <h3>neuphonic/neutts-air</h3>
+      <a href="https://github.com/neuphonic/neutts-air">GitHub Trending</a>
+      <p>An open-source text-to-speech (TTS) project trending on GitHub, reflecting ongoing interest in AI voice synthesis and automation tools.</p>
+      <div class="why-matters-to-you">
+        <strong>Why This Matters to You:</strong>
+        Voice synthesis is adjacent to your interests in automation and AI tools. Monitoring such projects can inspire features for your own products or content for your news aggregator.
+      </div>
+    </div>
 
-        // Hide loading
-        document.getElementById('loading').classList.add('hidden');
-    </script>
-</body>
-</html>
+    <div class="story-card" data-relevance="6">
+      <div class="relevance-badge">Relevance: 6/10</div>
+      <h3>laurindoisaac/crypto-trader-bot-with-AI-algo</h3>
+      <a href="https://github.com/laurindoisaac/crypto-trader-bot-with-AI-algo">GitHub Trending</a>
+      <p>An AI-powered cryptocurrency trading bot, exemplifying the growth of agentic, automated systems in finance.</p>
+      <div class="why-matters-to-you">
+        <strong>Why This Matters to You:</strong>
+        Agentic AI is a key learning area for you. This repo demonstrates practical applications of automation and AI decision-making, relevant to your projects and upskilling.
+      </div>
+    </div>
+
+    <div class="story-card" data-relevance="5">
+      <div class="relevance-badge">Relevance: 5/10</div>
+      <h3>bitDive/mcp-server</h3>
+      <a href="https://github.com/bitDive/mcp-server">GitHub Trending</a>
+      <p>A trending server project on GitHub, though not directly AI-related, reflecting broader developer tooling trends.</p>
+      <div class="why-matters-to-you">
+        <strong>Why This Matters to You:</strong>
+        While not core to your AI focus, tracking general dev tool trends can inform your infrastructure decisions and content strategy.
+      </div>
+    </div>
+
+    <div class="story-card" data-relevance="5">
+      <div class="relevance-badge">Relevance: 5/10</div>
+      <h3>MaximeRivest/maivi</h3>
+      <a href="https://github.com/MaximeRivest/maivi">GitHub Trending</a>
+      <p>A trending repo (details unspecified), potentially relevant to automation or AI tooling.</p>
+      <div class="why-matters-to-you">
+        <strong>Why This Matters to You:</strong>
+        Keeping an eye on trending repos helps you spot emerging tools and libraries that could accelerate your own projects or inform your news coverage.
+      </div>
+    </div>
+
+    <div class="story-card" data-relevance="4">
+      <div class="relevance-badge">Relevance: 4/10</div>
+      <h3>SuhaylShokri/CapCut-Pro-Win-10-11-2025</h3>
+      <a href="https://github.com/SuhaylShokri/CapCut-Pro-Win-10-11-2025">GitHub Trending</a>
+      <p>A video editing tool repo trending on GitHub, less directly related to your core AI and automation focus.</p>
+      <div class="why-matters-to-you">
+        <strong>Why This Matters to You:</strong>
+        While not central, multimedia tooling can intersect with AI-generated content, so it's worth occasional monitoring for crossover potential.
+      </div>
+    </div>
+  </section>
+
+  <!-- LAYER 3: Action Items -->
+  <section class="action-items">
+    <h2>⚡ Today's Action Items</h2>
+    
+    <div class="action-card high-priority">
+      <div class="action-type">🎯 OPPORTUNITY</div>
+      <h3>Audit your AI news aggregator for compliance with California’s new AI safety laws</h3>
+      <p class="action-description">Review your product’s data handling, transparency disclosures, and incident reporting features to ensure alignment with SB 53/TFAIA requirements.</p>
+      <div class="action-meta">
+        <span class="priority">HIGH</span>
+        <span class="time">2 hours</span>
+      </div>
+      <div class="why-now">Why now: California’s laws are live and may set a national standard; early compliance is a competitive differentiator for your news aggregator and AI Factory.</div>
+      <div class="related">Related: California’s new AI safety law shows regulation and innovation don’t have to clash, California's New AI Laws: What Just Changed for Your Business, California's SB 53: The First Frontier AI Law, Explained</div>
+    </div>
+
+    <div class="action-card high-priority">
+      <div class="action-type">🎯 LEARN</div>
+      <h3>Deep dive into the Transparency in Frontier Artificial Intelligence Act (TFAIA)</h3>
+      <p class="action-description">Read the full text of SB 53 and analyze its implications for AI tool developers, especially regarding transparency reports, incident reporting, and whistleblower protections.</p>
+      <div class="action-meta">
+        <span class="priority">HIGH</span>
+        <span class="time">1.5 hours</span>
+      </div>
+      <div class="why-now">Why now: Understanding these requirements is essential for product strategy, vendor selection, and thought leadership as a founder in the AI space.</div>
+      <div class="related">Related: California’s new AI safety law shows regulation and innovation don’t have to clash, California's New AI Laws: What Just Changed for Your Business, California's SB 53: The First Frontier AI Law, Explained</div>
+    </div>
+
+    <div class="action-card medium-priority">
+      <div class="action-type">🎯 BUILD</div>
+      <h3>Prototype a “compliance dashboard” feature for your AI news aggregator</h3>
+      <p class="action-description">Design and build a mockup or MVP that visualizes AI vendor compliance with transparency and safety laws, helping users track which companies meet new standards.</p>
+      <div class="action-meta">
+        <span class="priority">MEDIUM</span>
+        <span class="time">3 hours</span>
+      </div>
+      <div class="why-now">Why now: Compliance is becoming a user-facing feature; offering this tool positions your aggregator as a leader in AI policy coverage.</div>
+      <div class="related">Related: California’s new AI safety law shows regulation and innovation don’t have to clash, California's New AI Laws: What Just Changed for Your Business</div>
+    </div>
+
+    <div class="action-card medium-priority">
+      <div class="action-type">🎯 NETWORK</div>
+      <h3>Reach out to compliance officers at Anthropic, Perplexity, and OpenAI</h3>
+      <p class="action-description>
