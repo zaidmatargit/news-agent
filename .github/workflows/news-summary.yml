@@ -36,12 +36,6 @@ jobs:
           CONFIG_API_KEY: ${{ secrets.CONFIG_API_KEY }}
         run: |
           python generate_news.py
-      
-      - name: Transform to interactive viewer
-        run: python transform_news.py
-      
-      - name: Update landing page archive
-        run: python update_index.py
 
       - name: Debug - List files
         run: |
